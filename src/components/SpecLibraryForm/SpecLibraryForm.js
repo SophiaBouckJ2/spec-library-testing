@@ -15,6 +15,64 @@ import SpecLibraryFormTextElement from "./SpecLibraryFormTextElement/SpecLibrary
 
 // CONSTANTS
 
+const SpecLibraryDummyData = [
+  {
+    type: "title",
+    content: "test default value",
+    subList: null,
+  },
+  {
+    type: "subTitle",
+    content: "test default value",
+    subList: null,
+  },
+  {
+    type: "partHeading",
+    content: "test default value",
+    subList: [
+      {
+        type: "sectionHeading",
+        content: "test default value",
+        subList: [
+          {
+            type: "subsection",
+            content: "test default value",
+            subList: [
+              {
+                type: "subsectionList",
+                content: "test default value",
+                subList: [
+                  {
+                    type: "subsectionListDetails",
+                    content: "test default value",
+                    subList: [
+                      {
+                        type: "subSubsectionListDetails",
+                        content: "test default value",
+                        subList: null,
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "subsectionList",
+                content: "test default value",
+                subList: null,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    type: "endOfSection",
+    content: "test default value",
+    subList: null,
+  },
+];
+
 // OTHER
 
 // REACT COMPONENT
@@ -31,6 +89,63 @@ const SpecLibraryForm = (props) => {
   // API FUNCTIONS
 
   // HELPER FUNCTIONS
+
+  function getIndentAmount(type) {
+    switch (type) {
+      case "title":
+        return 0;
+      case "subTitle":
+        return 0;
+      case "partHeading":
+        return 1;
+      case "sectionHeading":
+        return 2;
+      case "subsection":
+        return 3;
+      case "subsectionList":
+        return 4;
+      case "subsectionListDetails":
+        return 5;
+      case "subSubsectionListDetails":
+        return 6;
+      case "endOfSection":
+        return 0;
+      default:
+        return 0;
+    }
+  }
+
+  const renderList = (items) => {
+    return items.map((item, index) => {
+      const commonProps = {
+        key: index,
+        type: item.type,
+        content: item.content,
+      };
+
+      if (
+        item.type === "title" ||
+        item.type === "subTitle" ||
+        item.type === "endOfSection"
+      ) {
+        return <SpecLibraryFormTextElement {...commonProps} />;
+      } else {
+        if (item.subList === null) {
+          return <SpecLibraryFormListElement {...commonProps} />;
+        } else {
+          return (
+            <div>
+              <SpecLibraryFormListElement
+                indent={getIndentAmount(item.type)}
+                {...commonProps}
+              />
+              <div>{renderList(item.subList)}</div>
+            </div>
+          );
+        }
+      }
+    });
+  };
 
   // RENDER
   return (
@@ -50,23 +165,7 @@ const SpecLibraryForm = (props) => {
         </div>
       </div>
       <div className="SpecLibraryFormContainer">
-        <SpecLibraryFormTextElement type={"Title"} />
-        <SpecLibraryFormTextElement type={"Sub-Title"} />
-        <SpecLibraryFormListElement
-          indent={0}
-          type={"PART 1 - "}
-          content={"test default value"}
-        />
-        <SpecLibraryFormListElement indent={1} type={"1.1 "} />
-        <SpecLibraryFormListElement indent={2} type={"A. "} />
-        <SpecLibraryFormListElement indent={3} type={"1. "} />
-        <SpecLibraryFormListElement indent={4} type={"a. "} />
-        <SpecLibraryFormListElement indent={5} type={"1) "} />
-        <SpecLibraryFormListElement indent={2} type={"B. "} />
-        <SpecLibraryFormTextElement type={"End of Section"} />
-
-        {/* map through eventual datastructure of list fields etc */}
-        {/* title, subtitle, dynamic list fields in between, and end of page */}
+        {renderList(SpecLibraryDummyData)}
       </div>
     </div>
   );

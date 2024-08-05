@@ -31,7 +31,7 @@ const SpecLibraryFormTextElement = (props) => {
   // RENDER
   return (
     <div className="SpecLibraryFormTextElement">
-      <div className="SpecLibraryFormTextElementNavigation">
+      {/* <div className="SpecLibraryFormTextElementNavigation">
         <div className="tooltip">
           <button className="SpecLibraryFormTextElementNavigationButton">
             <img src={delete_one} alt="delete_one" />
@@ -44,7 +44,7 @@ const SpecLibraryFormTextElement = (props) => {
           </button>
           <span className="tooltip-text">Add</span>
         </div>
-      </div>
+      </div> */}
       <div className="SpecLibraryFormTextElementContent">
         <div className="SpecLibraryFormTextElementMarker">{type}</div>
         <div className="SpecLibraryFormTextElementContentEditable">

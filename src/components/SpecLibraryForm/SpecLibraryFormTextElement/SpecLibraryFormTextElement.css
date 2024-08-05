@@ -1,0 +1,103 @@
+.SpecLibraryFormTextElement {
+  display: flex;
+  margin-bottom: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-direction: row;
+}
+
+.SpecLibraryFormTextElementNavigation {
+  display: flex;
+  align-items: center;
+}
+
+.SpecLibraryFormTextElementNavigationButtonGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.SpecLibraryFormTextElementNavigationButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25em;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.SpecLibraryFormTextElementNavigationButton:hover {
+  transform: scale(1.1);
+}
+
+.SpecLibraryFormTextElementNavigationButton img {
+  width: 24px;
+  height: 24px;
+
+  transition: transform 0.3s ease-in-out;
+}
+
+.SpecLibraryFormTextElementLineBox {
+  width: 1px;
+  background: #ccc;
+  height: auto;
+  margin: 10px;
+}
+
+.SpecLibraryFormTextElementContent {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 5px; /* Added padding for spacing */
+}
+
+.SpecLibraryFormTextElementMarker {
+  margin-right: 10px; /* Added margin for spacing */
+  align-self: flex-start; /* Align marker to the start */
+  font-family: Arial;
+  color: #858282;
+}
+
+.SpecLibraryFormTextElementContentEditable {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.SpecLibraryFormTextElementContentEditableInput {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical; /* Allow vertical resizing only */
+}
+
+/* Tooltip styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 50px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position above the button */
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s;
+  opacity: 0.5;
+  font-family: Arial;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 0.5;
+}

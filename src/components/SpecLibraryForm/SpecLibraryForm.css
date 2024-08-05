@@ -1,0 +1,48 @@
+.SpecLibraryForm {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.SpecLibraryFormHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.SpecLibraryFormHeaderTitle {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.SpecLibraryFormHeaderButtonGroup {
+  display: flex;
+}
+
+.SpecLibraryFormHeaderButton {
+  background: none;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.SpecLibraryFormHeaderButton:hover {
+  transform: scale(1.1);
+}
+
+.SpecLibraryFormHeaderButton img {
+  width: 20px; /* Adjust the size of the image */
+  height: 20px; /* Adjust the size of the image */
+  object-fit: contain;
+}
+
+.SpecLibraryFormContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}

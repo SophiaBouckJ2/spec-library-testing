@@ -37,7 +37,18 @@ const SpecLibraryDummyData = [
           {
             type: "subsection",
             content: "test default value",
-            subList: null,
+            subList: [
+              {
+                type: "subsectionList",
+                content: "test default value",
+                subList: null,
+              },
+              {
+                type: "subsectionList",
+                content: "test default value",
+                subList: null,
+              },
+            ],
           },
           {
             type: "subsection",
@@ -125,7 +136,8 @@ const SpecLibraryForm = (props) => {
     type,
     partHeadingIndex,
     sectionHeadingIndex,
-    subsectionIndex
+    subsectionIndex,
+    subsectionListIndex
   ) {
     switch (type) {
       case "title": // Title
@@ -138,6 +150,8 @@ const SpecLibraryForm = (props) => {
         return `${partHeadingIndex}.${sectionHeadingIndex + 1}`;
       case "subsection": // a.
         return `${String.fromCharCode(97 + subsectionIndex)}.`;
+      case "subsectionList": // 1.
+        return `${subsectionListIndex + 1}.`;
       default:
         return "";
     }
@@ -146,15 +160,17 @@ const SpecLibraryForm = (props) => {
   function renderList(
     items,
     partHeadingIndex,
-    sectionHeadingIndex,
-    subsectionIndex
+    sectionHeadingIndex = 0,
+    subsectionIndex = 0,
+    subsectionListIndex = 0
   ) {
     return items.map((item, index) => {
       const marker = getListMarker(
         item.type,
         partHeadingIndex,
         sectionHeadingIndex,
-        subsectionIndex
+        subsectionIndex,
+        subsectionListIndex
       );
 
       console.log("item", item, "marker", marker);
@@ -175,7 +191,13 @@ const SpecLibraryForm = (props) => {
         switch (item.type) {
           case "partHeading":
             partHeadingIndex++;
-            renderedSubList = renderList(item.subList, partHeadingIndex, 0, 0);
+            renderedSubList = renderList(
+              item.subList,
+              partHeadingIndex,
+              0,
+              0,
+              0
+            );
             break;
           case "sectionHeading":
             sectionHeadingIndex++;
@@ -183,6 +205,7 @@ const SpecLibraryForm = (props) => {
               item.subList,
               partHeadingIndex,
               sectionHeadingIndex,
+              0,
               0
             );
             break;
@@ -192,24 +215,23 @@ const SpecLibraryForm = (props) => {
               item.subList,
               partHeadingIndex,
               sectionHeadingIndex,
-              subsectionIndex
+              subsectionIndex,
+              0
+            );
+            break;
+          case "subsectionList":
+            subsectionListIndex++;
+            renderedSubList = renderList(
+              item.subList,
+              partHeadingIndex,
+              sectionHeadingIndex,
+              subsectionIndex,
+              subsectionListIndex
             );
             break;
           default:
             break;
         }
-      }
-
-      // Iterate the current item
-      switch (item.type) {
-        case "sectionHeading":
-          sectionHeadingIndex++;
-          break;
-        case "subsection":
-          subsectionIndex++;
-          break;
-        default:
-          break;
       }
 
       return (

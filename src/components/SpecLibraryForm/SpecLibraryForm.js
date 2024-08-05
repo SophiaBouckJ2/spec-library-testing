@@ -41,7 +41,29 @@ const SpecLibraryDummyData = [
               {
                 type: "subsectionList",
                 content: "test default value",
-                subList: null,
+                subList: [
+                  {
+                    type: "subsectionListDetails",
+                    content: "test default value",
+                    subList: [
+                      {
+                        type: "subSubsectionListDetails",
+                        content: "test default value",
+                        subList: null,
+                      },
+                      {
+                        type: "subSubsectionListDetails",
+                        content: "test default value",
+                        subList: null,
+                      },
+                    ],
+                  },
+                  {
+                    type: "subsectionListDetails",
+                    content: "test default value",
+                    subList: null,
+                  },
+                ],
               },
               {
                 type: "subsectionList",
@@ -137,7 +159,9 @@ const SpecLibraryForm = (props) => {
     partHeadingIndex,
     sectionHeadingIndex,
     subsectionIndex,
-    subsectionListIndex
+    subsectionListIndex,
+    subSectionListDetailsIndex,
+    subSubsectionListDetailsIndex
   ) {
     switch (type) {
       case "title": // Title
@@ -148,10 +172,14 @@ const SpecLibraryForm = (props) => {
         return `PART ${partHeadingIndex + 1}.`;
       case "sectionHeading": // 1.1
         return `${partHeadingIndex}.${sectionHeadingIndex + 1}`;
-      case "subsection": // a.
-        return `${String.fromCharCode(97 + subsectionIndex)}.`;
+      case "subsection": // A.
+        return `${String.fromCharCode(65 + subsectionIndex)}.`;
       case "subsectionList": // 1.
         return `${subsectionListIndex + 1}.`;
+      case "subsectionListDetails": // a.
+        return `${String.fromCharCode(97 + subSectionListDetailsIndex)}.`;
+      case "subSubsectionListDetails": // 1)
+        return `${subSubsectionListDetailsIndex + 1})`;
       default:
         return "";
     }
@@ -162,7 +190,9 @@ const SpecLibraryForm = (props) => {
     partHeadingIndex,
     sectionHeadingIndex = 0,
     subsectionIndex = 0,
-    subsectionListIndex = 0
+    subsectionListIndex = 0,
+    subSectionListDetailsIndex = 0,
+    subSubsectionListDetailsIndex = 0
   ) {
     return items.map((item, index) => {
       const marker = getListMarker(
@@ -170,20 +200,35 @@ const SpecLibraryForm = (props) => {
         partHeadingIndex,
         sectionHeadingIndex,
         subsectionIndex,
-        subsectionListIndex
+        subsectionListIndex,
+        subSectionListDetailsIndex,
+        subSubsectionListDetailsIndex
       );
 
-      console.log("item", item, "marker", marker);
+      let currentItem = null;
 
-      // Render the current item
-      const currentItem = (
-        <div
-          key={index}
-          style={{ paddingLeft: getIndentAmount(item.type) * 20 }}
-        >
-          {marker} {item.content}
-        </div>
-      );
+      if (
+        item.type === "title" ||
+        item.type === "subTitle" ||
+        item.type === "endOfSection"
+      ) {
+        currentItem = (
+          <SpecLibraryFormTextElement
+            key={index}
+            content={item.content}
+            type={item.type}
+          />
+        );
+      } else {
+        currentItem = (
+          <SpecLibraryFormListElement
+            key={index}
+            indent={getIndentAmount(item.type)}
+            content={item.content}
+            type={marker}
+          />
+        );
+      }
 
       // Render the sublist if it exists
       let renderedSubList = null;
@@ -196,6 +241,8 @@ const SpecLibraryForm = (props) => {
               partHeadingIndex,
               0,
               0,
+              0,
+              0,
               0
             );
             break;
@@ -205,6 +252,8 @@ const SpecLibraryForm = (props) => {
               item.subList,
               partHeadingIndex,
               sectionHeadingIndex,
+              0,
+              0,
               0,
               0
             );
@@ -216,6 +265,8 @@ const SpecLibraryForm = (props) => {
               partHeadingIndex,
               sectionHeadingIndex,
               subsectionIndex,
+              0,
+              0,
               0
             );
             break;
@@ -226,8 +277,56 @@ const SpecLibraryForm = (props) => {
               partHeadingIndex,
               sectionHeadingIndex,
               subsectionIndex,
-              subsectionListIndex
+              subsectionListIndex,
+              0,
+              0
             );
+            break;
+          case "subsectionListDetails":
+            subSectionListDetailsIndex++;
+            renderedSubList = renderList(
+              item.subList,
+              partHeadingIndex,
+              sectionHeadingIndex,
+              subsectionIndex,
+              subsectionListIndex,
+              subSectionListDetailsIndex,
+              0
+            );
+            break;
+          case "subSubsectionListDetails":
+            subSubsectionListDetailsIndex++;
+            renderedSubList = renderList(
+              item.subList,
+              partHeadingIndex,
+              sectionHeadingIndex,
+              subsectionIndex,
+              subsectionListIndex,
+              subSectionListDetailsIndex,
+              subSubsectionListDetailsIndex
+            );
+          default:
+            break;
+        }
+      } else {
+        switch (item.type) {
+          case "partHeading":
+            partHeadingIndex++;
+            break;
+          case "sectionHeading":
+            sectionHeadingIndex++;
+            break;
+          case "subsection":
+            subsectionIndex++;
+            break;
+          case "subsectionList":
+            subsectionListIndex++;
+            break;
+          case "subsectionListDetails":
+            subSectionListDetailsIndex++;
+            break;
+          case "subSubsectionListDetails":
+            subSubsectionListDetailsIndex++;
             break;
           default:
             break;
@@ -261,7 +360,7 @@ const SpecLibraryForm = (props) => {
         </div>
       </div>
       <div className="SpecLibraryFormContainer">
-        {renderList(SpecLibraryDummyData, 0, 0, 0)}
+        {renderList(SpecLibraryDummyData, 0, 0, 0, 0, 0, 0)}
       </div>
     </div>
   );

@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./SpecLibraryFormListElement.css";
 
 import menu from "../../../Assets/menu.png";
-import delete_all from "../../../Assets/delete_all.png";
 import delete_one from "../../../Assets/delete_one.png";
-import move_atw_left from "../../../Assets/move_atw_left.png";
 import move_left from "../../../Assets/move_left.png";
 import move_right from "../../../Assets/move_right.png";
 import add_new from "../../../Assets/add_new.png";

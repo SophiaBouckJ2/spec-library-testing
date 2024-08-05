@@ -3,12 +3,12 @@
   margin-bottom: 5px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  flex-direction: row; /* Ensure children are arranged in a row */
+  flex-direction: row;
 }
 
 .SpecLibraryFormListElementNavigation {
   display: flex;
-  align-items: center; /* Center buttons vertically */
+  align-items: center;
 }
 
 .SpecLibraryFormListElementNavigationButtonGroup {
@@ -21,28 +21,20 @@
   border: none;
   cursor: pointer;
   padding: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease-in-out;
-}
-
-.SpecLibraryFormListElementNavigationButton:hover {
-  transform: scale(1.1);
 }
 
 .SpecLibraryFormListElementNavigationButton img {
   width: 32px;
   height: 32px;
-
-  transition: transform 0.3s ease-in-out;
 }
 
 .SpecLibraryFormListElementLineBox {
   width: 1px;
   background: #ccc;
-  height: auto; /* Allow the line to adjust with the container height */
+  height: auto;
   margin: 10px;
 }
 
@@ -50,12 +42,12 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding: 5px; /* Added padding for spacing */
+  padding: 5px;
 }
 
 .SpecLibraryFormListElementMarker {
-  margin-right: 10px; /* Added margin for spacing */
-  align-self: flex-start; /* Align marker to the start */
+  margin-right: 10px;
+  align-self: flex-start;
   font-family: Arial;
   color: #858282;
 }
@@ -70,10 +62,10 @@
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  resize: vertical; /* Allow vertical resizing */
+  resize: vertical;
 }
 
-/* Tooltip styles */
+/* tooltip hover */
 .tooltip {
   position: relative;
   display: inline-block;
@@ -81,23 +73,55 @@
 
 .tooltip-text {
   visibility: hidden;
-  width: 50px;
   background-color: #555;
   color: #fff;
   text-align: center;
   border-radius: 4px;
-  padding: 5px 0;
+  padding: 5px 8px;
   position: absolute;
   z-index: 1;
-  bottom: 125%; /* Position above the button */
+  bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
   transition: opacity 0.3s;
   opacity: 0.5;
   font-family: Arial;
+  font-size: 12px;
+  box-sizing: border-box;
 }
 
 .tooltip:hover .tooltip-text {
   visibility: visible;
   opacity: 0.5;
+}
+
+/* Submenu styles */
+.SpecLibraryFormListElementSubmenu {
+  flex-direction: column;
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  z-index: 2;
+  left: 0;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.SpecLibraryFormListElementSubmenuNavigationButton {
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 4px; /* Rounded corners for the buttons */
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1),
+    /* Inner shadow for bevel effect */ 1px 1px 3px rgba(0, 0, 0, 0.2); /* Outer shadow for elevation */
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.SpecLibraryFormListElementSubmenuNavigationButton:hover {
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2),
+    2px 2px 4px rgba(0, 0, 0, 0.3);
 }

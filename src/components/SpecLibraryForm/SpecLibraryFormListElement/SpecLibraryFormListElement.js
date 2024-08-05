@@ -1,9 +1,7 @@
-// DEPENDENCIES
-import React, { useState, useEffect, useContext } from "react";
-
-// CSS
+import React, { useState, useEffect } from "react";
 import "./SpecLibraryFormListElement.css";
 
+import menu from "../../../Assets/menu.png";
 import delete_all from "../../../Assets/delete_all.png";
 import delete_one from "../../../Assets/delete_one.png";
 import move_atw_left from "../../../Assets/move_atw_left.png";
@@ -11,51 +9,53 @@ import move_left from "../../../Assets/move_left.png";
 import move_right from "../../../Assets/move_right.png";
 import add_new from "../../../Assets/add_new.png";
 
-// REACT COMPONENT
 const SpecLibraryFormListElement = (props) => {
-  let [indent, setIndent] = useState(0);
-  let [content, setContent] = useState("");
-  let [type, setType] = useState("");
+  const [indent, setIndent] = useState(0);
+  const [content, setContent] = useState("");
+  const [type, setType] = useState("");
+  const [showSubmenu, setShowSubmenu] = useState(false);
 
-  // USE EFFECT
   useEffect(() => {
     setIndent(props.indent ? props.indent : 0);
     setContent(props.content ? props.content : "");
     setType(props.type ? props.type : "");
   }, [props]);
 
-  // INPUT HANDLERS
-
   const handleContentChange = (event) => {
     setContent(event.target.value);
   };
 
-  // API FUNCTIONS
+  const toggleSubmenu = () => {
+    setShowSubmenu(!showSubmenu);
+  };
 
-  // HELPER FUNCTIONS
-
-  // RENDER
   return (
     <div className="SpecLibraryFormListElement">
       <div className="SpecLibraryFormListElementNavigation">
         <div className="SpecLibraryFormListElementNavigationButtonGroup">
           <div className="tooltip">
-            <button className="SpecLibraryFormListElementNavigationButton">
-              <img src={delete_all} alt="delete_all" />
+            <button
+              className="SpecLibraryFormListElementNavigationButton"
+              onClick={toggleSubmenu}
+            >
+              <img src={menu} alt="menu" />
             </button>
-            <span className="tooltip-text">Delete All</span>
+            {showSubmenu && (
+              <div className="SpecLibraryFormListElementSubmenu">
+                <button className="SpecLibraryFormListElementSubmenuNavigationButton">
+                  Delete All
+                </button>
+                <button className="SpecLibraryFormListElementSubmenuNavigationButton">
+                  Undo Indents
+                </button>
+              </div>
+            )}
           </div>
           <div className="tooltip">
             <button className="SpecLibraryFormListElementNavigationButton">
               <img src={delete_one} alt="delete_one" />
             </button>
             <span className="tooltip-text">Delete</span>
-          </div>
-          <div className="tooltip">
-            <button className="SpecLibraryFormListElementNavigationButton">
-              <img src={move_atw_left} alt="move_atw_left" />
-            </button>
-            <span className="tooltip-text">Undo Indents</span>
           </div>
           <div className="tooltip">
             <button className="SpecLibraryFormListElementNavigationButton">
@@ -96,5 +96,4 @@ const SpecLibraryFormListElement = (props) => {
   );
 };
 
-// EXPORT
 export default SpecLibraryFormListElement;

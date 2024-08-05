@@ -60,6 +60,8 @@ const SpecLibraryForm = (props) => {
         <SpecLibraryFormListElement indent={1} type={"1.1 "} />
         <SpecLibraryFormListElement indent={2} type={"A. "} />
         <SpecLibraryFormListElement indent={3} type={"1. "} />
+        <SpecLibraryFormListElement indent={4} type={"a. "} />
+        <SpecLibraryFormListElement indent={5} type={"1) "} />
         <SpecLibraryFormListElement indent={2} type={"B. "} />
         <SpecLibraryFormTextElement type={"End of Section"} />
 

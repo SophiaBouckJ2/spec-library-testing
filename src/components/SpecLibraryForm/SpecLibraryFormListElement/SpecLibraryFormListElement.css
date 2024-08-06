@@ -26,6 +26,11 @@
   justify-content: center;
 }
 
+.SpecLibraryFormListElementNavigationButton.GrayedOut:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
 .SpecLibraryFormListElementNavigationButton img {
   width: 32px;
   height: 32px;

@@ -11,12 +11,14 @@ const SpecLibraryFormListElement = (props) => {
   const [indent, setIndent] = useState(0);
   const [content, setContent] = useState("");
   const [type, setType] = useState("");
+  const [marker, setMarker] = useState("");
   const [showSubmenu, setShowSubmenu] = useState(false);
 
   useEffect(() => {
     setIndent(props.indent ? props.indent : 0);
     setContent(props.content ? props.content : "");
     setType(props.type ? props.type : "");
+    setMarker(props.marker ? props.marker : "");
   }, [props]);
 
   const handleContentChange = (event) => {
@@ -56,13 +58,35 @@ const SpecLibraryFormListElement = (props) => {
             <span className="tooltip-text">Delete</span>
           </div>
           <div className="tooltip">
-            <button className="SpecLibraryFormListElementNavigationButton">
+            <button
+              className="SpecLibraryFormListElementNavigationButton GrayedOut"
+              onClick={() =>
+                props.indentCallback(
+                  props.indent,
+                  "left",
+                  props.marker,
+                  props.type
+                )
+              }
+              // disabled={indent === 0}
+            >
               <img src={move_left} alt="move_left" />
             </button>
             <span className="tooltip-text">Indent Left</span>
           </div>
           <div className="tooltip">
-            <button className="SpecLibraryFormListElementNavigationButton">
+            <button
+              className="SpecLibraryFormListElementNavigationButton GrayedOut"
+              onClick={() =>
+                props.indentCallback(
+                  props.indent,
+                  "right",
+                  props.marker,
+                  props.type
+                )
+              }
+              // disabled={indent === 5 || marker === "PART 1."}
+            >
               <img src={move_right} alt="move_right" />
             </button>
             <span className="tooltip-text">Indent Right</span>
@@ -79,7 +103,7 @@ const SpecLibraryFormListElement = (props) => {
         <div key={index} className="SpecLibraryFormListElementLineBox"></div>
       ))}
       <div className="SpecLibraryFormListElementContent">
-        <div className="SpecLibraryFormListElementMarker">{type}</div>
+        <div className="SpecLibraryFormListElementMarker">{marker}</div>
         <div className="SpecLibraryFormListElementContentEditable">
           <textarea
             className="SpecLibraryFormListElementContentEditableInput"

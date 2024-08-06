@@ -8,11 +8,13 @@ import "./SpecLibraryFormTextElement.css";
 const SpecLibraryFormTextElement = (props) => {
   let [content, setContent] = useState("");
   let [type, setType] = useState("");
+  let [marker, setMarker] = useState("");
 
   // USE EFFECT
   useEffect(() => {
     setContent(props.content ? props.content : "");
     setType(props.type ? props.type : "");
+    setMarker(props.marker ? props.marker : "");
   }, [props]);
 
   // INPUT HANDLERS
@@ -29,7 +31,7 @@ const SpecLibraryFormTextElement = (props) => {
   return (
     <div className="SpecLibraryFormTextElement">
       <div className="SpecLibraryFormTextElementContent">
-        <div className="SpecLibraryFormTextElementMarker">{type}</div>
+        <div className="SpecLibraryFormTextElementMarker">{marker}</div>
         <div className="SpecLibraryFormTextElementContentEditable">
           <textarea
             className="SpecLibraryFormTextElementContentEditableInput"

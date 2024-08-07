@@ -13,6 +13,7 @@ const SpecLibraryFormListElement = (props) => {
   const [type, setType] = useState("");
   const [marker, setMarker] = useState("");
   const [showSubmenu, setShowSubmenu] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   useEffect(() => {
     setIndent(props.indent ? props.indent : 0);
@@ -29,6 +30,19 @@ const SpecLibraryFormListElement = (props) => {
     setShowSubmenu(!showSubmenu);
   };
 
+  function handleDeleteAll() {
+    setIsPopupVisible(true);
+  }
+
+  function confirmDeleteAll() {
+    props.deleteAllCallback(props.type, props.marker, props.relativeIndex);
+    setIsPopupVisible(false);
+  }
+
+  function cancelDeleteAll() {
+    setIsPopupVisible(false);
+  }
+
   return (
     <div className="SpecLibraryFormListElement">
       <div className="SpecLibraryFormListElementNavigation">
@@ -44,18 +58,12 @@ const SpecLibraryFormListElement = (props) => {
               <div className="SpecLibraryFormListElementSubmenu">
                 <button
                   className="SpecLibraryFormListElementSubmenuNavigationButton"
-                  onClick={() =>
-                    props.deleteAllCallback(
-                      props.type,
-                      props.marker,
-                      props.relativeIndex
-                    )
-                  }
+                  onClick={() => {
+                    setShowSubmenu(false);
+                    handleDeleteAll();
+                  }}
                 >
                   Delete All
-                </button>
-                <button className="SpecLibraryFormListElementSubmenuNavigationButton">
-                  Undo Indents
                 </button>
               </div>
             )}
@@ -118,6 +126,30 @@ const SpecLibraryFormListElement = (props) => {
           />
         </div>
       </div>
+      {isPopupVisible && (
+        <div className="SpecLibraryFormListElementPopup">
+          <div className="SpecLibraryFormListElementPopupContent">
+            <div className="SpecLibraryFormListElementPopupMessage">
+              Are you sure you want to delete this element and all it's children
+              elements?
+            </div>
+            <div className="SpecLibraryFormListElementPopupButtonGroup">
+              <button
+                className="SpecLibraryFormListElementPopupButton"
+                onClick={cancelDeleteAll}
+              >
+                Cancel
+              </button>
+              <button
+                className="SpecLibraryFormListElementPopupButton"
+                onClick={confirmDeleteAll}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -61,12 +61,7 @@ const SpecLibraryFormListElement = (props) => {
             <button
               className="SpecLibraryFormListElementNavigationButton GrayedOut"
               onClick={() =>
-                props.indentCallback(
-                  props.indent,
-                  "left",
-                  props.marker,
-                  props.type
-                )
+                props.indentCallback("left", props.marker, props.type)
               }
               // disabled={indent === 0}
             >
@@ -78,12 +73,7 @@ const SpecLibraryFormListElement = (props) => {
             <button
               className="SpecLibraryFormListElementNavigationButton GrayedOut"
               onClick={() =>
-                props.indentCallback(
-                  props.indent,
-                  "right",
-                  props.marker,
-                  props.type
-                )
+                props.indentCallback("right", props.marker, props.type)
               }
               // disabled={indent === 5 || marker === "PART 1."}
             >
@@ -92,7 +82,12 @@ const SpecLibraryFormListElement = (props) => {
             <span className="tooltip-text">Indent Right</span>
           </div>
           <div className="tooltip">
-            <button className="SpecLibraryFormListElementNavigationButton">
+            <button
+              className="SpecLibraryFormListElementNavigationButton"
+              onClick={() =>
+                props.addCallback(props.type, props.marker, props.relativeIndex)
+              }
+            >
               <img src={add_new} alt="add_new" />
             </button>
             <span className="tooltip-text">Add</span>

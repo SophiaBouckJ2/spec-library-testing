@@ -42,7 +42,16 @@ const SpecLibraryFormListElement = (props) => {
             </button>
             {showSubmenu && (
               <div className="SpecLibraryFormListElementSubmenu">
-                <button className="SpecLibraryFormListElementSubmenuNavigationButton">
+                <button
+                  className="SpecLibraryFormListElementSubmenuNavigationButton"
+                  onClick={() =>
+                    props.deleteAllCallback(
+                      props.type,
+                      props.marker,
+                      props.relativeIndex
+                    )
+                  }
+                >
                   Delete All
                 </button>
                 <button className="SpecLibraryFormListElementSubmenuNavigationButton">

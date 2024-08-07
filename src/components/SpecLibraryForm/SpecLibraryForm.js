@@ -114,6 +114,7 @@ const SpecLibraryForm = (props) => {
             relativeIndex={item.relativeIndex}
             indentCallback={indentCallback}
             addCallback={AddCallback}
+            deleteAllCallback={DeleteAllCallback}
           />
         );
       }
@@ -188,6 +189,7 @@ const SpecLibraryForm = (props) => {
 
       item.type = newType;
       item.marker = newMarker;
+      item.relativeIndex = index;
 
       if (item.subList) {
         updateSubListsTypesAndMarkers(item, newType, newMarker);
@@ -241,6 +243,23 @@ const SpecLibraryForm = (props) => {
     }
 
     return parent;
+  }
+
+  function deleteListItemAndChildren(item, parent, marker) {
+    parent.subList = parent.subList.filter((item) => item.marker !== marker);
+    updateSubListsTypesAndMarkers(parent, parent.type, parent.marker);
+    return parent;
+  }
+
+  function DeleteAllCallback(type, marker, relativeIndex) {
+    if (!(type === "partHeading" && relativeIndex === 0)) {
+      const result = findItemAndSiblingList(marker, data);
+      const { parentList, item, depth } = result;
+      const parent = findParentOfItem(item);
+
+      let a = deleteListItemAndChildren(item, parent, marker);
+      console.log("result: ", a);
+    }
   }
 
   function AddCallback(type, marker, relativeIndex) {
@@ -306,18 +325,6 @@ const SpecLibraryForm = (props) => {
     parentOfParent,
     parentSiblings
   ) {
-    console.log(
-      "item ",
-      item,
-      "siblingList ",
-      siblingList,
-      "parent ",
-      parent,
-      "parentOfParent ",
-      parentOfParent,
-      "parentSiblings ",
-      parentSiblings
-    );
     if (item.type !== "partHeading") {
       const newType =
         SpecLibraryListTypes[SpecLibraryListTypes.indexOf(item.type) - 1];
@@ -408,7 +415,6 @@ const SpecLibraryForm = (props) => {
   // RENDER
   return (
     <div className="SpecLibraryForm">
-      {/* {console.log("Data: ", data)} */}
       <div className="SpecLibraryFormHeader">
         <div className="SpecLibraryFormHeaderTitle">Spec Library Form</div>
         <div className="SpecLibraryFormHeaderButtonGroup">

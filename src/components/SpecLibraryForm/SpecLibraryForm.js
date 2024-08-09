@@ -254,6 +254,8 @@ const SpecLibraryForm = (props) => {
   }
 
   function AddCallback(item) {
+    // deep copy
+    let dataCopy = JSON.parse(JSON.stringify(data));
     const result = findItemsSiblingList(item.uuid, data);
     const { siblingList } = result;
     const parent = findParentOfItem(item);
@@ -274,14 +276,22 @@ const SpecLibraryForm = (props) => {
       subList: null,
     };
 
-    const currentItemParent = insertListItem(
-      newItem,
-      parent,
-      item.relativeIndex + 1
+    insertItemsAtIndex(
+      dataCopy,
+      [newItem],
+      item.relativeIndex + 1,
+      parent.uuid
     );
 
-    console.log("newItem: ", newItem);
-    console.log("Current Item Parent: ", currentItemParent);
+    // update all types and markers
+    updateSubListsTypesAndMarkers(
+      dataCopy[2],
+      dataCopy[2].type,
+      dataCopy[2].marker
+    );
+
+    console.log(dataCopy);
+    setData(dataCopy);
   }
 
   function indentCallback(direction, item) {
@@ -471,7 +481,7 @@ const SpecLibraryForm = (props) => {
         if (parent) {
           setSubListToNull(dataCopy, parent.uuid);
           console.log(dataCopy);
-          // setData(dataCopy);
+          setData(dataCopy);
         }
       } else {
         // item.subList added to parent.subList at relative index
@@ -493,7 +503,7 @@ const SpecLibraryForm = (props) => {
         );
 
         console.log(dataCopy);
-        // setData(dataCopy);
+        setData(dataCopy);
       }
     }
   }

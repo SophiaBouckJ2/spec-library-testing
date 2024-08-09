@@ -17,9 +17,9 @@ const SpecLibraryFormListElement = (props) => {
 
   useEffect(() => {
     setIndent(props.indent ? props.indent : 0);
-    setContent(props.content ? props.content : "");
-    setType(props.type ? props.type : "");
-    setMarker(props.marker ? props.marker : "");
+    setContent(props.item.content ? props.item.content : "");
+    setType(props.item.type ? props.item.type : "");
+    setMarker(props.item.marker ? props.item.marker : "");
   }, [props]);
 
   const handleContentChange = (event) => {
@@ -35,7 +35,7 @@ const SpecLibraryFormListElement = (props) => {
   }
 
   function confirmDeleteAll() {
-    props.deleteAllCallback(props.type, props.marker, props.relativeIndex);
+    props.deleteAllCallback(props.item);
     setIsPopupVisible(false);
   }
 
@@ -71,13 +71,7 @@ const SpecLibraryFormListElement = (props) => {
           <div className="tooltip">
             <button
               className="SpecLibraryFormListElementNavigationButton"
-              onClick={() =>
-                props.deleteOneCallback(
-                  props.marker,
-                  props.type,
-                  props.relativeIndex
-                )
-              }
+              onClick={() => props.deleteOneCallback(props.item)}
             >
               <img src={delete_one} alt="delete_one" />
             </button>
@@ -86,9 +80,7 @@ const SpecLibraryFormListElement = (props) => {
           <div className="tooltip">
             <button
               className="SpecLibraryFormListElementNavigationButton GrayedOut"
-              onClick={() =>
-                props.indentCallback("left", props.marker, props.type)
-              }
+              onClick={() => props.indentCallback("left", props.item)}
               // disabled={indent === 0}
             >
               <img src={move_left} alt="move_left" />
@@ -98,9 +90,7 @@ const SpecLibraryFormListElement = (props) => {
           <div className="tooltip">
             <button
               className="SpecLibraryFormListElementNavigationButton GrayedOut"
-              onClick={() =>
-                props.indentCallback("right", props.marker, props.type)
-              }
+              onClick={() => props.indentCallback("right", props.item)}
               // disabled={indent === 5 || marker === "PART 1."}
             >
               <img src={move_right} alt="move_right" />
@@ -110,9 +100,7 @@ const SpecLibraryFormListElement = (props) => {
           <div className="tooltip">
             <button
               className="SpecLibraryFormListElementNavigationButton"
-              onClick={() =>
-                props.addCallback(props.type, props.marker, props.relativeIndex)
-              }
+              onClick={() => props.addCallback(props.item)}
             >
               <img src={add_new} alt="add_new" />
             </button>

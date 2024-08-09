@@ -1,5 +1,6 @@
 export const SpecLibraryDummyData = [
   {
+    uuid: "1",
     marker: "Title",
     relativeIndex: 0,
     type: "title",
@@ -7,6 +8,7 @@ export const SpecLibraryDummyData = [
     subList: null,
   },
   {
+    uuid: "2",
     marker: "Subtitle",
     relativeIndex: 1,
     type: "subTitle",
@@ -14,42 +16,49 @@ export const SpecLibraryDummyData = [
     subList: null,
   },
   {
+    uuid: "3",
     marker: "List",
     relativeIndex: 2,
     type: "list",
     content: null,
     subList: [
       {
+        uuid: "4",
         marker: "PART 1.",
         relativeIndex: 0,
         type: "partHeading",
         content: "test default value",
         subList: [
           {
+            uuid: "5",
             marker: "1.1",
             relativeIndex: 0,
             type: "sectionHeading",
             content: "test default value",
             subList: [
               {
+                uuid: "6",
                 marker: "A.",
                 relativeIndex: 0,
                 type: "subsection",
                 content: "test default value",
                 subList: [
                   {
+                    uuid: "7",
                     marker: "1.",
                     relativeIndex: 0,
                     type: "subsectionList",
                     content: "test default value",
                     subList: [
                       {
+                        uuid: "8",
                         marker: "a.",
                         relativeIndex: 0,
                         type: "subsectionListDetails",
                         content: "test default value",
                         subList: [
                           {
+                            uuid: "9",
                             marker: "1)",
                             relativeIndex: 0,
                             type: "subSubsectionListDetails",
@@ -59,15 +68,26 @@ export const SpecLibraryDummyData = [
                         ],
                       },
                       {
+                        uuid: "10",
                         marker: "b.",
                         relativeIndex: 1,
                         type: "subsectionListDetails",
                         content: "test default value",
-                        subList: null,
+                        subList: [
+                          {
+                            uuid: "11",
+                            marker: "1)",
+                            relativeIndex: 0,
+                            type: "subSubsectionListDetails",
+                            content: "test default value",
+                            subList: null,
+                          },
+                        ],
                       },
                     ],
                   },
                   {
+                    uuid: "12",
                     marker: "2.",
                     relativeIndex: 1,
                     type: "subsectionList",
@@ -77,6 +97,7 @@ export const SpecLibraryDummyData = [
                 ],
               },
               {
+                uuid: "13",
                 marker: "B.",
                 relativeIndex: 1,
                 type: "subsection",
@@ -86,6 +107,7 @@ export const SpecLibraryDummyData = [
             ],
           },
           {
+            uuid: "14",
             marker: "1.2",
             relativeIndex: 1,
             type: "sectionHeading",
@@ -95,12 +117,14 @@ export const SpecLibraryDummyData = [
         ],
       },
       {
+        uuid: "15",
         marker: "PART 2.",
         relativeIndex: 1,
         type: "partHeading",
         content: "test default value test",
         subList: [
           {
+            uuid: "16",
             marker: "2.1",
             relativeIndex: 0,
             type: "sectionHeading",
@@ -110,14 +134,24 @@ export const SpecLibraryDummyData = [
         ],
       },
       {
+        uuid: "17",
         marker: "PART 3.",
         relativeIndex: 2,
         type: "partHeading",
         content: "test default value",
         subList: [
           {
+            uuid: "18",
             marker: "3.1",
             relativeIndex: 0,
+            type: "sectionHeading",
+            content: "test default value",
+            subList: null,
+          },
+          {
+            uuid: "20",
+            marker: "3.2",
+            relativeIndex: 1,
             type: "sectionHeading",
             content: "test default value",
             subList: null,
@@ -127,6 +161,7 @@ export const SpecLibraryDummyData = [
     ],
   },
   {
+    uuid: "19",
     marker: "End Of Section",
     relativeIndex: 3,
     type: "endOfSection",

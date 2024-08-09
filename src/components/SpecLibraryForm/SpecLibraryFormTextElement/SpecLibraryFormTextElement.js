@@ -1,5 +1,5 @@
 // DEPENDENCIES
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 
 // CSS
 import "./SpecLibraryFormTextElement.css";
@@ -12,9 +12,9 @@ const SpecLibraryFormTextElement = (props) => {
 
   // USE EFFECT
   useEffect(() => {
-    setContent(props.content ? props.content : "");
-    setType(props.type ? props.type : "");
-    setMarker(props.marker ? props.marker : "");
+    setContent(props.item.content ? props.item.content : "");
+    setType(props.item.type ? props.item.type : "");
+    setMarker(props.item.marker ? props.item.marker : "");
   }, [props]);
 
   // INPUT HANDLERS

@@ -69,7 +69,16 @@ const SpecLibraryFormListElement = (props) => {
             )}
           </div>
           <div className="tooltip">
-            <button className="SpecLibraryFormListElementNavigationButton">
+            <button
+              className="SpecLibraryFormListElementNavigationButton"
+              onClick={() =>
+                props.deleteOneCallback(
+                  props.marker,
+                  props.type,
+                  props.relativeIndex
+                )
+              }
+            >
               <img src={delete_one} alt="delete_one" />
             </button>
             <span className="tooltip-text">Delete</span>

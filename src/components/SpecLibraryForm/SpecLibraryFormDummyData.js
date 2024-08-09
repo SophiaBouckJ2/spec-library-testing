@@ -109,6 +109,21 @@ export const SpecLibraryDummyData = [
           },
         ],
       },
+      {
+        marker: "PART 3.",
+        relativeIndex: 2,
+        type: "partHeading",
+        content: "test default value",
+        subList: [
+          {
+            marker: "3.1",
+            relativeIndex: 0,
+            type: "sectionHeading",
+            content: "test default value",
+            subList: null,
+          },
+        ],
+      },
     ],
   },
   {

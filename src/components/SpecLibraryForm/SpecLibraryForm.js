@@ -142,6 +142,7 @@ const SpecLibraryForm = (props) => {
     return null;
   }
 
+  // cleans up the data structure by updating the types, markers, etc of the items
   function updateSubListsTypesAndMarkers(list, lastType, lastMarker) {
     list.subList = list.subList.map((item, index) => {
       let parent = findParentOfItem(item);
@@ -211,39 +212,29 @@ const SpecLibraryForm = (props) => {
     return parent;
   }
 
-  function DeleteSingleItemAndChildren(parent, targetUuid) {
-    parent.subList = parent.subList.filter((item) => item.uuid !== targetUuid);
-    updateSubListsTypesAndMarkers(parent, parent.type, parent.marker);
-    return parent;
-  }
+  function DeleteSingleItemAndChildren(dataCopy, targetUuid) {
+    console.log("deleting...");
 
-  function DeleteSingleItem(item, parent, parentOfParent) {
-    const newType =
-      SpecLibraryListTypes[SpecLibraryListTypes.indexOf(item.type) - 1];
-    const newMarker = getListMarker(
-      newType,
-      parent.relativeIndex + 1,
-      parentOfParent ? parentOfParent.relativeIndex : 0
-    );
+    function findAndDelete(items) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].uuid === targetUuid) {
+          items.splice(i, 1);
+          return true;
+        }
 
-    // Adjust the types and markers of items in the sublists
-    let updatedSublist = null;
-    if (item.subList) {
-      updatedSublist = updateSubListsTypesAndMarkers(item, newType, newMarker);
+        if (items[i].subList) {
+          const found = findAndDelete(items[i].subList);
+          if (found) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
 
-    // Insert updated sublist into parent's sublist at relative index
-    parent.subList.splice(parent.relativeIndex, 1, ...updatedSublist);
+    findAndDelete(dataCopy);
 
-    // Update the relative index, and marker of the items after the inserted item
-    let updatedParentSublist = parent.subList;
-    updatedParentSublist = updateSubListsTypesAndMarkers(
-      parent,
-      parent.type,
-      parent.marker
-    );
-
-    return updatedParentSublist;
+    return dataCopy;
   }
 
   function DeleteAllCallback(item) {
@@ -462,16 +453,6 @@ const SpecLibraryForm = (props) => {
 
     findAndInsert(dataCopy);
 
-    let dataCopyAfterTargetUuid = dataCopy;
-    // update/fix all types and markers
-    dataCopyAfterTargetUuid = updateSubListsTypesAndMarkers(
-      dataCopy[relativeIndex],
-      dataCopy[relativeIndex].type,
-      dataCopy[relativeIndex].marker
-    );
-
-    console.log(dataCopy);
-
     return dataCopy;
   }
 
@@ -490,7 +471,7 @@ const SpecLibraryForm = (props) => {
         if (parent) {
           setSubListToNull(dataCopy, parent.uuid);
           console.log(dataCopy);
-          setData(dataCopy);
+          // setData(dataCopy);
         }
       } else {
         // item.subList added to parent.subList at relative index
@@ -502,10 +483,17 @@ const SpecLibraryForm = (props) => {
         );
 
         // remove item from parentofparent.sublist
-        DeleteSingleItemAndChildren(dataCopy[item.relativeIndex], item.uuid);
+        DeleteSingleItemAndChildren(dataCopy, item.uuid);
+
+        // update all types and markers
+        updateSubListsTypesAndMarkers(
+          dataCopy[2],
+          dataCopy[2].type,
+          dataCopy[2].marker
+        );
 
         console.log(dataCopy);
-        setData(dataCopy);
+        // setData(dataCopy);
       }
     }
   }

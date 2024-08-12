@@ -9,6 +9,7 @@ import save from "../../Assets/save.png";
 import SpecLibraryFormListElement from "./SpecLibraryFormListElement/SpecLibraryFormListElement";
 import SpecLibraryFormTextElement from "./SpecLibraryFormTextElement/SpecLibraryFormTextElement";
 import { generateUUID } from "../utils/UUIDGenerator";
+import { HistoryLinkedList } from "../utils/history";
 
 // MUI ICONS
 
@@ -31,12 +32,31 @@ const SpecLibraryListTypes = [
 // REACT COMPONENT
 const SpecLibraryForm = (props) => {
   // STATES
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(props.data);
+  const history = React.useRef(new HistoryLinkedList(props.data));
 
   // USE EFFECT
   useEffect(() => {
     setData(props.data);
+    history.current.addSnapshot(props.data);
   }, [props.data]);
+
+  // INPUT HANDLERS
+
+  // Event handlers for undo and redo buttons
+  function handleUndo() {
+    const prevData = history.current.undo();
+    if (prevData) {
+      setData(prevData);
+    }
+  }
+
+  function handleRedo() {
+    const nextData = history.current.redo();
+    if (nextData) {
+      setData(nextData);
+    }
+  }
 
   // HELPER FUNCTIONS
 
@@ -85,6 +105,12 @@ const SpecLibraryForm = (props) => {
         </React.Fragment>
       );
     });
+  }
+
+  // Function to update data and add snapshot to history
+  function updateData(newData) {
+    setData(newData);
+    history.current.addSnapshot(newData);
   }
 
   // Returns the amount of indentation for the given type
@@ -322,7 +348,8 @@ const SpecLibraryForm = (props) => {
       );
 
       console.log(dataCopy);
-      setData(dataCopy);
+      // setData(dataCopy);
+      updateData(dataCopy);
     }
   }
 
@@ -362,7 +389,8 @@ const SpecLibraryForm = (props) => {
     );
 
     console.log(dataCopy);
-    setData(dataCopy);
+    // setData(dataCopy);
+    updateData(dataCopy);
   }
 
   //callback
@@ -376,7 +404,8 @@ const SpecLibraryForm = (props) => {
     } else if (direction === "left") {
       leftIndent(dataCopy, itemCopy, parent, parentOfParent, item);
     }
-    setData(dataCopy);
+    // setData(dataCopy);
+    updateData(dataCopy);
   }
 
   //helper/callback
@@ -402,7 +431,6 @@ const SpecLibraryForm = (props) => {
       );
 
       console.log("dataCopy: ", dataCopy);
-      // setData(dataCopy);
     }
   }
 
@@ -492,7 +520,6 @@ const SpecLibraryForm = (props) => {
       );
 
       console.log("dataCopy: ", dataCopy);
-      // setData(dataCopy);
     }
   }
 
@@ -536,7 +563,8 @@ const SpecLibraryForm = (props) => {
       );
 
       console.log(dataCopy);
-      setData(dataCopy);
+      // setData(dataCopy);
+      updateData(dataCopy);
     }
   }
 
@@ -556,7 +584,8 @@ const SpecLibraryForm = (props) => {
     };
 
     updateContent(dataCopy);
-    setData(dataCopy);
+    // setData(dataCopy);
+    updateData(dataCopy);
   }
 
   // RENDER
@@ -565,10 +594,10 @@ const SpecLibraryForm = (props) => {
       <div className="SpecLibraryFormHeader">
         <div className="SpecLibraryFormHeaderTitle">Spec Library Form</div>
         <div className="SpecLibraryFormHeaderButtonGroup">
-          <button className="SpecLibraryFormHeaderButton">
+          <button className="SpecLibraryFormHeaderButton" onClick={handleUndo}>
             <img src={undo} alt="undo" />
           </button>
-          <button className="SpecLibraryFormHeaderButton">
+          <button className="SpecLibraryFormHeaderButton" onClick={handleRedo}>
             <img src={redo} alt="redo" />
           </button>
           <button className="SpecLibraryFormHeaderButton">

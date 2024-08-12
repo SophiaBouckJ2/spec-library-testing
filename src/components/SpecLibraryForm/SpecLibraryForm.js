@@ -291,8 +291,14 @@ const SpecLibraryForm = (props) => {
 
   // Callback function to delete all items
   function DeleteAllCallback(item) {
-    const { dataCopy, parent } = getDetailsForCallback(item);
-    if (!(item.type === "partHeading" && item.relativeIndex === 0)) {
+    const { dataCopy, parent, siblingList } = getDetailsForCallback(item);
+    if (
+      !(
+        item.type === "partHeading" &&
+        item.relativeIndex === 0 &&
+        siblingList.length <= 1
+      )
+    ) {
       if (parent.subList.length === 1) {
         setSubListToNull(dataCopy, parent.uuid);
       } else {

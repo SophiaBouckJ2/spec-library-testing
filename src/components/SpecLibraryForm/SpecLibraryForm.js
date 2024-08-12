@@ -341,14 +341,18 @@ const SpecLibraryForm = (props) => {
   //callback
   // Indent the item to the right or left
   function indentCallback(direction, item) {
+    // deep copy
+    let dataCopy = JSON.parse(JSON.stringify(data));
     const result = findItemsSiblingList(item.uuid, data);
     if (!result) {
       console.error("Item not found");
       return;
     }
     const { siblingList } = result;
-    const parent = findParentOfItem(item);
-    const parentOfParent = findParentOfItem(parent);
+    // const parent = findParentOfItem(item);
+    const parent = findParent(dataCopy, item.uuid);
+    // const parentOfParent = findParentOfItem(parent);
+    const parentOfParent = findParent(dataCopy, parent.uuid);
     const parentSiblings = parentOfParent ? parentOfParent.subList : data;
 
     // console.log("item: ", item, " siblings: ", siblingList);
@@ -356,13 +360,21 @@ const SpecLibraryForm = (props) => {
     if (direction === "right") {
       rightIndent(item, siblingList);
     } else {
-      leftIndent(item, siblingList, parent, parentOfParent, parentSiblings);
+      leftIndent(
+        dataCopy,
+        item,
+        siblingList,
+        parent,
+        parentOfParent,
+        parentSiblings
+      );
     }
   }
 
   //helper
   // Indent the item to the left
   function leftIndent(
+    dataCopy,
     item,
     siblingList,
     parent,
@@ -370,47 +382,24 @@ const SpecLibraryForm = (props) => {
     parentSiblings
   ) {
     if (item.type !== "partHeading") {
-      const newType =
-        SpecLibraryListTypes[SpecLibraryListTypes.indexOf(item.type) - 1];
-      const newMarker = getListMarker(
-        newType,
+      insertItemsAtIndex(
+        dataCopy,
+        [item],
         parent.relativeIndex + 1,
-        parentOfParent ? parentOfParent.relativeIndex : 0
+        parentOfParent.uuid
       );
 
-      // Adjust the types and markers of items in the sublists
-      let updatedSublist = null;
-      if (item.subList) {
-        updatedSublist = updateSubListsTypesAndMarkers(
-          item,
-          newType,
-          newMarker
-        );
-      }
+      DeleteSingleItemAndChildren(dataCopy, item.uuid);
 
-      const currentItem = {
-        ...item,
-        type: newType,
-        marker: newMarker,
-        relativeIndex: parent.relativeIndex + 1,
-        subList: updatedSublist,
-      };
-
-      // TODO: use a different fucniton here
-      const currentItemParent = insertListItem(
-        currentItem,
-        parentOfParent,
-        parent.relativeIndex + 1
+      // update all types and markers
+      updateSubListsTypesAndMarkers(
+        dataCopy[2],
+        dataCopy[2].type,
+        dataCopy[2].marker
       );
 
-      console.log("Current Item Parent: ", currentItemParent);
-
-      // traverse list until record with currentItemParent details is found(marker and relativeindex are the same?)
-      // remove that record and replace it with currentItemParent
-
-      // this could also mean replacing the parentparents sublist with currentItemParent
-
-      // setData(updatedParentSiblings);
+      console.log("dataCopy: ", dataCopy);
+      setData(dataCopy);
     }
   }
 

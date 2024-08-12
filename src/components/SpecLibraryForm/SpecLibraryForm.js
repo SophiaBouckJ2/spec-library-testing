@@ -33,18 +33,52 @@ const SpecLibraryForm = (props) => {
   // STATES
   const [data, setData] = useState([]);
 
-  // CONTEXT
-
   // USE EFFECT
   useEffect(() => {
     setData(props.data);
   }, [props.data]);
 
-  // INPUT HANDLERS
-
-  // API FUNCTIONS
-
   // HELPER FUNCTIONS
+
+  // Renders the list of items
+  function renderList(data) {
+    return data.map((item, index) => {
+      let currentItem;
+
+      if (
+        item.type === "title" ||
+        item.type === "subTitle" ||
+        item.type === "endOfSection"
+      ) {
+        currentItem = <SpecLibraryFormTextElement key={index} item={item} />;
+      } else if (item.type !== "list") {
+        currentItem = (
+          <SpecLibraryFormListElement
+            key={index}
+            indent={getIndentAmount(item.type)}
+            item={item}
+            indentCallback={indentCallback}
+            addCallback={AddCallback}
+            deleteAllCallback={DeleteAllCallback}
+            deleteOneCallback={deleteOneCallback}
+          />
+        );
+      }
+
+      // Render the sublist if it exists
+      let renderedSubList = null;
+      if (item.subList) {
+        renderedSubList = renderList(item.subList);
+      }
+
+      return (
+        <React.Fragment key={index}>
+          {currentItem}
+          {renderedSubList}
+        </React.Fragment>
+      );
+    });
+  }
 
   // Returns the amount of indentation for the given type
   function getIndentAmount(type) {
@@ -90,54 +124,34 @@ const SpecLibraryForm = (props) => {
     }
   }
 
-  // Renders the list of items
-  function renderList(data) {
-    return data.map((item, index) => {
-      let currentItem;
-
-      if (
-        item.type === "title" ||
-        item.type === "subTitle" ||
-        item.type === "endOfSection"
-      ) {
-        currentItem = <SpecLibraryFormTextElement key={index} item={item} />;
-      } else if (item.type !== "list") {
-        currentItem = (
-          <SpecLibraryFormListElement
-            key={index}
-            indent={getIndentAmount(item.type)}
-            item={item}
-            indentCallback={indentCallback}
-            addCallback={AddCallback}
-            deleteAllCallback={DeleteAllCallback}
-            deleteOneCallback={deleteOneCallback}
-          />
-        );
-      }
-
-      // Render the sublist if it exists
-      let renderedSubList = null;
-      if (item.subList) {
-        renderedSubList = renderList(item.subList);
-      }
-
-      return (
-        <React.Fragment key={index}>
-          {currentItem}
-          {renderedSubList}
-        </React.Fragment>
-      );
-    });
+  // Returns deep copies of item and data, sibling list, parent, and parent of parent
+  function getDetailsForCallback(item) {
+    // return deep copy of item and data
+    let itemCopy = JSON.parse(JSON.stringify(item));
+    let dataCopy = JSON.parse(JSON.stringify(data));
+    // return sibling list of item
+    let siblingList = findItemsSiblingList(itemCopy.uuid, dataCopy);
+    // return parent of item
+    let parent = findParent(dataCopy, itemCopy.uuid);
+    // return parent of parent of item
+    let parentOfParent = findParent(dataCopy, parent.uuid);
+    return {
+      itemCopy: itemCopy,
+      dataCopy: dataCopy,
+      siblingList: siblingList,
+      parent: parent,
+      parentOfParent: parentOfParent,
+    };
   }
 
   // Returns the sublist of the items parent given the uuid
-  function findItemsSiblingList(uuid, list, depth = 0) {
+  function findItemsSiblingList(uuid, list) {
     for (let item of list) {
       if (item.uuid === uuid) {
-        return { siblingList: list, depth };
+        return list;
       }
       if (item.subList) {
-        const result = findItemsSiblingList(uuid, item.subList, depth + 1);
+        const result = findItemsSiblingList(uuid, item.subList);
         if (result) {
           return result;
         }
@@ -170,14 +184,12 @@ const SpecLibraryForm = (props) => {
       return item;
     });
 
-    return list.subList;
+    // return list.subList;
   }
 
   //helper
   // Deletes the item and its children from the data structure using uuid
   function DeleteSingleItemAndChildren(dataCopy, targetUuid) {
-    console.log("deleting...");
-
     function findAndDelete(items) {
       for (let i = 0; i < items.length; i++) {
         if (items[i].uuid === targetUuid) {
@@ -197,7 +209,7 @@ const SpecLibraryForm = (props) => {
 
     findAndDelete(dataCopy);
 
-    return dataCopy;
+    // return dataCopy;
   }
 
   // Helper function to find the parent using the item's uuid
@@ -220,18 +232,76 @@ const SpecLibraryForm = (props) => {
     return null; // Parent not found
   }
 
+  //helper
+  // Set the sublist of the item with the given uuid to null
+  function setSubListToNull(dataCopy, targetUuid) {
+    // Helper function to search through the structure
+    function findAndSetSubListToNull(items) {
+      for (const item of items) {
+        if (item.uuid === targetUuid) {
+          item.subList = null;
+          return true; // Element found and modified
+        }
+
+        if (item.subList) {
+          const found = findAndSetSubListToNull(item.subList);
+          if (found) {
+            return true; // Stop searching if the element is found
+          }
+        }
+      }
+      return false; // Element not found in this branch
+    }
+
+    findAndSetSubListToNull(dataCopy);
+    // return dataCopy;
+  }
+
+  //helper
+  // insert items if they come in as an array (ex. sublist, [one record])
+  function insertItemsAtIndex(dataCopy, newItems, relativeIndex, targetUuid) {
+    // Helper function to search through the structure
+    function findAndInsert(items) {
+      for (const item of items) {
+        if (item.uuid === targetUuid) {
+          if (!item.subList) {
+            // Initialize subList as an empty array if it doesn't exist
+            item.subList = [];
+          }
+
+          // Insert each new item at the specified starting relative index
+          newItems.forEach((newItem, index) => {
+            // Give a new UUID to the new item
+            newItem.uuid = generateUUID();
+            item.subList.splice(relativeIndex + index, 0, newItem);
+          });
+
+          return true; // Element found and items inserted
+        }
+
+        if (item.subList) {
+          const found = findAndInsert(item.subList);
+          if (found) {
+            return true; // Stop searching if the element is found
+          }
+        }
+      }
+      return false; // Element not found in this branch
+    }
+
+    findAndInsert(dataCopy);
+
+    // return dataCopy;
+  }
+
+  // CALLBACKS
+
   // Callback function to delete all items
   function DeleteAllCallback(item) {
-    console.log("deleting all...");
-    // Deep copy of the data
-    let dataCopy = JSON.parse(JSON.stringify(data));
-
+    const { dataCopy, parent } = getDetailsForCallback(item);
     if (!(item.type === "partHeading" && item.relativeIndex === 0)) {
-      // Find the parent of the item using its uuid
-      const itemParent = findParent(dataCopy, item.uuid);
-
-      if (itemParent.subList.length === 1) {
-        setSubListToNull(dataCopy, itemParent.uuid);
+      if (parent.subList.length === 1) {
+        setSubListToNull(dataCopy, parent.uuid);
       } else {
         // remove item from parentofparent.sublist
         DeleteSingleItemAndChildren(dataCopy, item.uuid);
@@ -253,9 +323,7 @@ const SpecLibraryForm = (props) => {
   //callback
   // Add a new item after the current item at the same list level
   function AddCallback(item) {
-    // deep copy
-    let dataCopy = JSON.parse(JSON.stringify(data));
-    const parent = findParent(dataCopy, item.uuid);
+    const { dataCopy, parent } = getDetailsForCallback(item);
 
     const newMarker = getListMarker(
       item.type,
@@ -294,53 +362,28 @@ const SpecLibraryForm = (props) => {
   //callback
   // Indent the item to the right or left
   function indentCallback(direction, item) {
-    // deep copy
-    let dataCopy = JSON.parse(JSON.stringify(data));
-    const result = findItemsSiblingList(item.uuid, data);
-    if (!result) {
-      console.error("Item not found");
-      return;
-    }
-    const { siblingList } = result;
-    const parent = findParent(dataCopy, item.uuid);
-    const parentOfParent = findParent(dataCopy, parent.uuid);
-    const parentSiblings = parentOfParent ? parentOfParent.subList : data;
-
-    // console.log("item: ", item, " siblings: ", siblingList);
+    const { itemCopy, dataCopy, siblingList, parent, parentOfParent } =
+      getDetailsForCallback(item);
 
     if (direction === "right") {
-      rightIndent(item, siblingList, parent);
-    } else {
-      leftIndent(
-        dataCopy,
-        item,
-        siblingList,
-        parent,
-        parentOfParent,
-        parentSiblings
-      );
+      rightIndent(dataCopy, itemCopy, siblingList, parent);
+    } else if (direction === "left") {
+      leftIndent(dataCopy, itemCopy, parent, parentOfParent);
     }
   }
 
-  //helper
+  //helper/callback
   // Indent the item to the left
-  function leftIndent(
-    dataCopy,
-    item,
-    siblingList,
-    parent,
-    parentOfParent,
-    parentSiblings
-  ) {
-    if (item.type !== "partHeading") {
+  function leftIndent(dataCopy, itemCopy, parent, parentOfParent) {
+    if (itemCopy.type !== "partHeading") {
       insertItemsAtIndex(
         dataCopy,
-        [item],
+        [itemCopy],
         parent.relativeIndex + 1,
         parentOfParent.uuid
       );
 
-      DeleteSingleItemAndChildren(dataCopy, item.uuid);
+      DeleteSingleItemAndChildren(dataCopy, itemCopy.uuid);
 
       // update all types and markers
       updateSubListsTypesAndMarkers(
@@ -355,23 +398,16 @@ const SpecLibraryForm = (props) => {
     }
   }
 
-  //helper
+  //helper/callback
   // Indent the item to the right
-  function rightIndent(item, siblingList, parent) {
-    console.log("indenting right...");
-    // Deep copy of the data
-    let dataCopy = JSON.parse(JSON.stringify(data));
-    // Deep copy of the item
-    let itemCopy = JSON.parse(JSON.stringify(item));
+  // TODO: Add a check for the last item in the list, edge case
+  function rightIndent(dataCopy, itemCopy, siblingList, parent) {
     if (
-      item.type !== "subSubsectionListDetails" &&
-      item.marker !== "PART 1." &&
-      item.relativeIndex !== 0
+      itemCopy.type !== "subSubsectionListDetails" &&
+      itemCopy.marker !== "PART 1." &&
+      itemCopy.relativeIndex !== 0
     ) {
-      console.log("siblings: ", siblingList);
-      const nextSibling = siblingList[item.relativeIndex - 1];
-      console.log("nextSibling: ", nextSibling);
-      console.log("length: ", nextSibling.subList.length);
+      const nextSibling = siblingList[itemCopy.relativeIndex - 1];
       insertItemsAtIndex(
         dataCopy,
         [itemCopy],
@@ -379,7 +415,7 @@ const SpecLibraryForm = (props) => {
         nextSibling.uuid
       );
 
-      DeleteSingleItemAndChildren(dataCopy, item.uuid);
+      DeleteSingleItemAndChildren(dataCopy, itemCopy.uuid);
 
       // update all types and markers
       updateSubListsTypesAndMarkers(
@@ -394,74 +430,13 @@ const SpecLibraryForm = (props) => {
     }
   }
 
-  //helper
-  // Set the sublist of the item with the given uuid to null
-  function setSubListToNull(dataCopy, targetUuid) {
-    // Helper function to search through the structure
-    function findAndSetSubListToNull(items) {
-      for (const item of items) {
-        if (item.uuid === targetUuid) {
-          item.subList = null;
-          return true; // Element found and modified
-        }
-
-        if (item.subList) {
-          const found = findAndSetSubListToNull(item.subList);
-          if (found) {
-            return true; // Stop searching if the element is found
-          }
-        }
-      }
-      return false; // Element not found in this branch
-    }
-
-    findAndSetSubListToNull(dataCopy);
-    return dataCopy;
-  }
-
-  //helper
-  // insert items if they come in as an array (ex. sublist, [one record])
-  function insertItemsAtIndex(dataCopy, newItems, relativeIndex, targetUuid) {
-    // Helper function to search through the structure
-    function findAndInsert(items) {
-      for (const item of items) {
-        if (item.uuid === targetUuid) {
-          if (!item.subList) {
-            // Initialize subList as an empty array if it doesn't exist
-            item.subList = [];
-          }
-
-          // Insert each new item at the specified starting relative index
-          newItems.forEach((newItem, index) => {
-            // Give a new UUID to the new item
-            newItem.uuid = generateUUID();
-            item.subList.splice(relativeIndex + index, 0, newItem);
-          });
-
-          return true; // Element found and items inserted
-        }
-
-        if (item.subList) {
-          const found = findAndInsert(item.subList);
-          if (found) {
-            return true; // Stop searching if the element is found
-          }
-        }
-      }
-      return false; // Element not found in this branch
-    }
-
-    findAndInsert(dataCopy);
-
-    return dataCopy;
-  }
-
   //callback
   // Delete the item and its children
   function deleteOneCallback(item) {
-    console.log("deleting one...");
     // deep copy
     let dataCopy = JSON.parse(JSON.stringify(data));
+    // deep copy of the item
+    let itemCopy = JSON.parse(JSON.stringify(item));
     if (!(item.type === "partHeading" && item.relativeIndex === 0)) {
       const itemParent = findParent(dataCopy, item.uuid);
 
@@ -470,8 +445,8 @@ const SpecLibraryForm = (props) => {
         // this step is the difference between delete all and delete one
         insertItemsAtIndex(
           dataCopy,
-          item.subList,
-          item.relativeIndex,
+          itemCopy.subList,
+          itemCopy.relativeIndex,
           itemParent.uuid
         );
       }
@@ -513,7 +488,7 @@ const SpecLibraryForm = (props) => {
           </button>
         </div>
       </div>
-      <div className="SpecLibraryFormContainer">{renderList(props.data)}</div>
+      <div className="SpecLibraryFormContainer">{renderList(data)}</div>
     </div>
   );
 };

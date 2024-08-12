@@ -73,17 +73,18 @@ export const SpecLibraryDummyData = [
                         relativeIndex: 1,
                         type: "subsectionListDetails",
                         content: "test default value",
-                        subList: null,
-                        // [
-                        //   {
-                        //     uuid: "11",
-                        //     marker: "1)",
-                        //     relativeIndex: 0,
-                        //     type: "subSubsectionListDetails",
-                        //     content: "test default value",
-                        //     subList: null,
-                        //   },
-                        // ],
+                        subList:
+                          // null,
+                          [
+                            {
+                              uuid: "11",
+                              marker: "1)",
+                              relativeIndex: 0,
+                              type: "subSubsectionListDetails",
+                              content: "test default value",
+                              subList: null,
+                            },
+                          ],
                       },
                     ],
                   },

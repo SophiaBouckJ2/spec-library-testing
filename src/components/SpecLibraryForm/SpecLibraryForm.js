@@ -183,8 +183,6 @@ const SpecLibraryForm = (props) => {
 
       return item;
     });
-
-    // return list.subList;
   }
 
   //helper
@@ -208,8 +206,6 @@ const SpecLibraryForm = (props) => {
     }
 
     findAndDelete(dataCopy);
-
-    // return dataCopy;
   }
 
   // Helper function to find the parent using the item's uuid
@@ -254,7 +250,6 @@ const SpecLibraryForm = (props) => {
     }
 
     findAndSetSubListToNull(dataCopy);
-    // return dataCopy;
   }
 
   //helper
@@ -290,8 +285,6 @@ const SpecLibraryForm = (props) => {
     }
 
     findAndInsert(dataCopy);
-
-    // return dataCopy;
   }
 
   // CALLBACKS
@@ -366,16 +359,38 @@ const SpecLibraryForm = (props) => {
       getDetailsForCallback(item);
 
     if (direction === "right") {
-      rightIndent(dataCopy, itemCopy, siblingList, parent);
+      rightIndent(dataCopy, itemCopy, siblingList, item);
     } else if (direction === "left") {
-      leftIndent(dataCopy, itemCopy, parent, parentOfParent);
+      leftIndent(dataCopy, itemCopy, parent, parentOfParent, item);
     }
+  }
+
+  //helper
+  // Helper function to check for 'subSubSectionListDetails' type in sublist leaves
+  function hasSubSubSectionListDetails(subList) {
+    for (const subItem of subList) {
+      if (subItem.type === "subSubSectionListDetails") {
+        console.log("Found 'subSubSectionListDetails' in the sublist!");
+        return true; // Stop searching as soon as the type is found
+      }
+
+      // Recursively check in the nested sublists
+      if (subItem.subList && hasSubSubSectionListDetails(subItem.subList)) {
+        return true;
+      }
+    }
+    return false; // Type not found in any of the leaves
   }
 
   //helper/callback
   // Indent the item to the left
-  function leftIndent(dataCopy, itemCopy, parent, parentOfParent) {
+  // TODO: edge case
+  function leftIndent(dataCopy, itemCopy, parent, parentOfParent, item) {
     if (itemCopy.type !== "partHeading") {
+      if (itemCopy.subList && hasSubSubSectionListDetails(itemCopy.subList)) {
+        console.log("found subsubsectionlistdetails in the sublist");
+      }
+
       insertItemsAtIndex(
         dataCopy,
         [itemCopy],
@@ -383,7 +398,7 @@ const SpecLibraryForm = (props) => {
         parentOfParent.uuid
       );
 
-      DeleteSingleItemAndChildren(dataCopy, itemCopy.uuid);
+      DeleteSingleItemAndChildren(dataCopy, item.uuid);
 
       // update all types and markers
       updateSubListsTypesAndMarkers(
@@ -401,13 +416,16 @@ const SpecLibraryForm = (props) => {
   //helper/callback
   // Indent the item to the right
   // TODO: Add a check for the last item in the list, edge case
-  function rightIndent(dataCopy, itemCopy, siblingList, parent) {
+  function rightIndent(dataCopy, itemCopy, siblingList, item) {
     if (
       itemCopy.type !== "subSubsectionListDetails" &&
       itemCopy.marker !== "PART 1." &&
       itemCopy.relativeIndex !== 0
     ) {
       const nextSibling = siblingList[itemCopy.relativeIndex - 1];
+      if (!nextSibling.subList) {
+        nextSibling.subList = [];
+      }
       insertItemsAtIndex(
         dataCopy,
         [itemCopy],
@@ -415,7 +433,7 @@ const SpecLibraryForm = (props) => {
         nextSibling.uuid
       );
 
-      DeleteSingleItemAndChildren(dataCopy, itemCopy.uuid);
+      DeleteSingleItemAndChildren(dataCopy, item.uuid);
 
       // update all types and markers
       updateSubListsTypesAndMarkers(

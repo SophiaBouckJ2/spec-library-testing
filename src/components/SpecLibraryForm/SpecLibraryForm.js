@@ -173,6 +173,7 @@ const SpecLibraryForm = (props) => {
     return list.subList;
   }
 
+  // TODO: replace this function with findparent throughout, then remove
   // Finds the immediate parent of the given item in the nested list structure
   function findParentOfItem(item, list = data) {
     // Traverse each item in the list
@@ -197,7 +198,7 @@ const SpecLibraryForm = (props) => {
     return null;
   }
 
-  // TODO: is this needed?
+  // TODO: is this needed?, only used in indent delete when refactored
   function insertListItem(item, parent, index) {
     if (parent.subList) {
       parent.subList.splice(index, 0, item);
@@ -245,34 +246,25 @@ const SpecLibraryForm = (props) => {
     return dataCopy;
   }
 
-  // //callback
-  // function DeleteAllCallback(item) {
-  //   // deep copy
-  //   let dataCopy = JSON.parse(JSON.stringify(data));
-  //   if (!(item.type === "partHeading" && item.relativeIndex === 0)) {
-  //     // TODO: parse through dataCopy until parent is found using uuid, use parent to complete the cases below
+  // Helper function to find the parent using the item's uuid
+  function findParent(dataCopy, targetUuid) {
+    for (const currentItem of dataCopy) {
+      if (currentItem.subList) {
+        for (const subItem of currentItem.subList) {
+          if (subItem.uuid === targetUuid) {
+            return currentItem; // Parent found
+          }
+        }
 
-  //     if (!item.subList) {
-  //       setSubListToNull(dataCopy, itemParent.uuid);
-  //       console.log(dataCopy);
-  //       setData(dataCopy);
-  //     } else {
-  //       DeleteSingleItemAndChildren(dataCopy, itemParent.uuid);
-
-  //       // update all types and markers
-  //       updateSubListsTypesAndMarkers(
-  //         dataCopy[2],
-  //         dataCopy[2].type,
-  //         dataCopy[2].marker
-  //       );
-
-  //       console.log(dataCopy);
-  //       setData(dataCopy);
-  //       // parent = DeleteSingleItemAndChildren(parent, item.marker);
-  //       // console.log("parent: ", parent);
-  //     }
-  //   }
-  // }
+        // Recursively search in sublists
+        const parent = findParent(currentItem.subList, targetUuid);
+        if (parent) {
+          return parent; // Stop searching if the parent is found
+        }
+      }
+    }
+    return null; // Parent not found
+  }
 
   // Callback function to delete all items
   function DeleteAllCallback(item) {
@@ -281,50 +273,25 @@ const SpecLibraryForm = (props) => {
     let dataCopy = JSON.parse(JSON.stringify(data));
 
     if (!(item.type === "partHeading" && item.relativeIndex === 0)) {
-      // Helper function to find the parent using the item's uuid
-      function findParent(items, targetUuid) {
-        for (const currentItem of items) {
-          if (currentItem.subList) {
-            for (const subItem of currentItem.subList) {
-              if (subItem.uuid === targetUuid) {
-                return currentItem; // Parent found
-              }
-            }
-
-            // Recursively search in sublists
-            const parent = findParent(currentItem.subList, targetUuid);
-            if (parent) {
-              return parent; // Stop searching if the parent is found
-            }
-          }
-        }
-        return null; // Parent not found
-      }
-
       // Find the parent of the item using its uuid
       const itemParent = findParent(dataCopy, item.uuid);
 
-      if (itemParent) {
-        if (!item.subList) {
-          // Set the parent's sublist to null if the item has no sublist
-          setSubListToNull(dataCopy, itemParent.uuid);
-          console.log(dataCopy);
-          setData(dataCopy);
-        } else {
-          // Delete the item and its children if it has a sublist
-          DeleteSingleItemAndChildren(dataCopy, itemParent.uuid);
-
-          // // Update all types and markers
-          // updateSubListsTypesAndMarkers(
-          //   dataCopy[2],
-          //   dataCopy[2].type,
-          //   dataCopy[2].marker
-          // );
-
-          console.log(dataCopy);
-          setData(dataCopy);
-        }
+      if (itemParent.subList.length === 1) {
+        setSubListToNull(dataCopy, itemParent.uuid);
+      } else {
+        // remove item from parentofparent.sublist
+        DeleteSingleItemAndChildren(dataCopy, item.uuid);
       }
+
+      // update all types and markers
+      updateSubListsTypesAndMarkers(
+        dataCopy[2],
+        dataCopy[2].type,
+        dataCopy[2].marker
+      );
+
+      console.log(dataCopy);
+      setData(dataCopy);
     }
   }
 
@@ -429,6 +396,7 @@ const SpecLibraryForm = (props) => {
         subList: updatedSublist,
       };
 
+      // TODO: use a different fucniton here
       const currentItemParent = insertListItem(
         currentItem,
         parentOfParent,
@@ -559,24 +527,21 @@ const SpecLibraryForm = (props) => {
     // deep copy
     let dataCopy = JSON.parse(JSON.stringify(data));
     if (!(item.type === "partHeading" && item.relativeIndex === 0)) {
-      const result = findItemsSiblingList(item.uuid, dataCopy);
-      const { siblingList, depth } = result;
-      const parent = findParentOfItem(item);
-      const parentOfParent = findParentOfItem(parent);
-      const parentSiblings = parentOfParent ? parentOfParent.subList : dataCopy;
+      const itemParent = findParent(dataCopy, item.uuid);
 
       if (item.subList) {
         // item.subList added to parent.subList at relative index
+        // this step is the difference between delete all and delete one
         insertItemsAtIndex(
           dataCopy,
           item.subList,
           item.relativeIndex,
-          parent.uuid
+          itemParent.uuid
         );
       }
 
-      if (parent.subList.length === 1) {
-        setSubListToNull(dataCopy, parent.uuid);
+      if (itemParent.subList.length === 1) {
+        setSubListToNull(dataCopy, itemParent.uuid);
       } else {
         // remove item from parentofparent.sublist
         DeleteSingleItemAndChildren(dataCopy, item.uuid);
@@ -590,6 +555,7 @@ const SpecLibraryForm = (props) => {
       );
 
       console.log(dataCopy);
+      setData(dataCopy);
     }
   }
 

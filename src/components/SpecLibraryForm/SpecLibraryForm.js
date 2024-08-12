@@ -363,23 +363,7 @@ const SpecLibraryForm = (props) => {
     } else if (direction === "left") {
       leftIndent(dataCopy, itemCopy, parent, parentOfParent, item);
     }
-  }
-
-  //helper
-  // Helper function to check for 'subSubSectionListDetails' type in sublist leaves
-  function hasSubSubSectionListDetails(subList) {
-    for (const subItem of subList) {
-      if (subItem.type === "subSubSectionListDetails") {
-        console.log("Found 'subSubSectionListDetails' in the sublist!");
-        return true; // Stop searching as soon as the type is found
-      }
-
-      // Recursively check in the nested sublists
-      if (subItem.subList && hasSubSubSectionListDetails(subItem.subList)) {
-        return true;
-      }
-    }
-    return false; // Type not found in any of the leaves
+    setData(dataCopy);
   }
 
   //helper/callback
@@ -387,10 +371,6 @@ const SpecLibraryForm = (props) => {
   // TODO: edge case
   function leftIndent(dataCopy, itemCopy, parent, parentOfParent, item) {
     if (itemCopy.type !== "partHeading") {
-      if (itemCopy.subList && hasSubSubSectionListDetails(itemCopy.subList)) {
-        console.log("found subsubsectionlistdetails in the sublist");
-      }
-
       insertItemsAtIndex(
         dataCopy,
         [itemCopy],
@@ -409,19 +389,74 @@ const SpecLibraryForm = (props) => {
       );
 
       console.log("dataCopy: ", dataCopy);
-      setData(dataCopy);
+      // setData(dataCopy);
     }
+  }
+
+  // Helper function to find all items with 'subSubSectionListDetails' type in sublist leaves
+  function findItemsWithSubSubSectionListDetails(subList) {
+    // console.log(subList);
+    let foundItems = [];
+
+    for (const subItem of subList) {
+      // console.log(subItem);
+      if (subItem.type === "subSubsectionListDetails") {
+        foundItems.push(subItem); // Add the item to the results array
+      }
+
+      // Recursively search in the nested sublists
+      if (subItem.subList) {
+        foundItems = foundItems.concat(
+          findItemsWithSubSubSectionListDetails(subItem.subList)
+        );
+      }
+    }
+
+    return foundItems; // Return all found items
   }
 
   //helper/callback
   // Indent the item to the right
   // TODO: Add a check for the last item in the list, edge case
   function rightIndent(dataCopy, itemCopy, siblingList, item) {
+    console.log("rightIndent");
     if (
       itemCopy.type !== "subSubsectionListDetails" &&
       itemCopy.marker !== "PART 1." &&
       itemCopy.relativeIndex !== 0
     ) {
+      if (itemCopy.subList) {
+        const foundItems = findItemsWithSubSubSectionListDetails(
+          itemCopy.subList
+        );
+
+        if (foundItems.length > 0) {
+          console.log(
+            "Items with 'subSubSectionListDetails' type found:",
+            foundItems
+          );
+          return;
+
+          //     foundItems.forEach((foundItem) => {
+          //       // deep copy of the found item
+          //       const foundItemCopy = JSON.parse(JSON.stringify(foundItem));
+          //       const foundItemParent = findParent(dataCopy, foundItem.uuid);
+          //       const foundItemParentOfParent = findParent(
+          //         dataCopy,
+          //         foundItemParent.uuid
+          //       );
+          //       leftIndent(
+          //         dataCopy,
+          //         foundItemCopy,
+          //         itemCopy,
+          //         foundItemParentOfParent,
+          //         foundItem
+          //       );
+          //     });
+        }
+      }
+      // console.log("dataCopy after dealing with subsections: ", dataCopy);
+
       const nextSibling = siblingList[itemCopy.relativeIndex - 1];
       if (!nextSibling.subList) {
         nextSibling.subList = [];
@@ -444,20 +479,23 @@ const SpecLibraryForm = (props) => {
       );
 
       console.log("dataCopy: ", dataCopy);
-      setData(dataCopy);
+      // setData(dataCopy);
     }
   }
 
   //callback
   // Delete the item and its children
   function deleteOneCallback(item) {
-    // deep copy
-    let dataCopy = JSON.parse(JSON.stringify(data));
-    // deep copy of the item
-    let itemCopy = JSON.parse(JSON.stringify(item));
-    if (!(item.type === "partHeading" && item.relativeIndex === 0)) {
-      const itemParent = findParent(dataCopy, item.uuid);
-
+    const { itemCopy, dataCopy, siblingList, parent } =
+      getDetailsForCallback(item);
+    // if the item is part heading and 0 does it have siblings?
+    if (
+      !(
+        item.type === "partHeading" &&
+        item.relativeIndex === 0 &&
+        siblingList.length <= 1
+      )
+    ) {
       if (item.subList) {
         // item.subList added to parent.subList at relative index
         // this step is the difference between delete all and delete one
@@ -465,12 +503,12 @@ const SpecLibraryForm = (props) => {
           dataCopy,
           itemCopy.subList,
           itemCopy.relativeIndex,
-          itemParent.uuid
+          parent.uuid
         );
       }
 
-      if (itemParent.subList.length === 1) {
-        setSubListToNull(dataCopy, itemParent.uuid);
+      if (parent.subList.length === 1) {
+        setSubListToNull(dataCopy, parent.uuid);
       } else {
         // remove item from parentofparent.sublist
         DeleteSingleItemAndChildren(dataCopy, item.uuid);

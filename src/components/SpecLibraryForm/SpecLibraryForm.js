@@ -50,13 +50,20 @@ const SpecLibraryForm = (props) => {
         item.type === "subTitle" ||
         item.type === "endOfSection"
       ) {
-        currentItem = <SpecLibraryFormTextElement key={index} item={item} />;
+        currentItem = (
+          <SpecLibraryFormTextElement
+            key={index}
+            item={item}
+            onContentChangeCallback={onContentChangeCallback}
+          />
+        );
       } else if (item.type !== "list") {
         currentItem = (
           <SpecLibraryFormListElement
             key={index}
             indent={getIndentAmount(item.type)}
             item={item}
+            onContentChangeCallback={onContentChangeCallback}
             indentCallback={indentCallback}
             addCallback={AddCallback}
             deleteAllCallback={DeleteAllCallback}
@@ -531,6 +538,25 @@ const SpecLibraryForm = (props) => {
       console.log(dataCopy);
       setData(dataCopy);
     }
+  }
+
+  function onContentChangeCallback(content, item) {
+    // Create a deep copy
+    const dataCopy = JSON.parse(JSON.stringify(data));
+
+    const updateContent = (list) => {
+      list.forEach((listItem) => {
+        if (listItem.uuid === item.uuid) {
+          listItem.content = content; // Update content
+        }
+        if (listItem.subList) {
+          updateContent(listItem.subList); // Recursively update in sublists
+        }
+      });
+    };
+
+    updateContent(dataCopy);
+    setData(dataCopy);
   }
 
   // RENDER

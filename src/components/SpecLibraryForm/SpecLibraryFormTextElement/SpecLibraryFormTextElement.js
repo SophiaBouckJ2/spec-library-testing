@@ -19,8 +19,9 @@ const SpecLibraryFormTextElement = (props) => {
 
   // INPUT HANDLERS
 
-  const handleContentChange = (event) => {
+  const handleContentChange = (event, item) => {
     setContent(event.target.value);
+    props.onContentChangeCallback(event.target.value, item);
   };
 
   // API FUNCTIONS
@@ -38,7 +39,7 @@ const SpecLibraryFormTextElement = (props) => {
             rows="1"
             placeholder="Type here..."
             value={content}
-            onChange={handleContentChange}
+            onChange={(event) => handleContentChange(event, props.item)}
           />
         </div>
       </div>

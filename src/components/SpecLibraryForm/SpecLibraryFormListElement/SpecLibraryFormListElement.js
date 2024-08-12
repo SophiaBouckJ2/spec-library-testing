@@ -22,8 +22,9 @@ const SpecLibraryFormListElement = (props) => {
     setMarker(props.item.marker ? props.item.marker : "");
   }, [props]);
 
-  const handleContentChange = (event) => {
+  const handleContentChange = (event, item) => {
     setContent(event.target.value);
+    props.onContentChangeCallback(event.target.value, item);
   };
 
   const toggleSubmenu = () => {
@@ -119,7 +120,7 @@ const SpecLibraryFormListElement = (props) => {
             rows="2"
             placeholder="Type here..."
             value={content}
-            onChange={handleContentChange}
+            onChange={(event) => handleContentChange(event, props.item)}
           />
         </div>
       </div>

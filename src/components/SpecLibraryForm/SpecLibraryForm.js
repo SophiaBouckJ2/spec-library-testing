@@ -6,10 +6,12 @@ import "./SpecLibraryForm.css";
 import undo from "../../Assets/undo.png";
 import redo from "../../Assets/redo.png";
 import save from "../../Assets/save.png";
+import document_preview from "../../Assets/document_preview.png";
 import SpecLibraryFormListElement from "./SpecLibraryFormListElement/SpecLibraryFormListElement";
 import SpecLibraryFormTextElement from "./SpecLibraryFormTextElement/SpecLibraryFormTextElement";
 import { generateUUID } from "../utils/UUIDGenerator";
 import { HistoryLinkedList } from "../utils/history";
+import { SpecLibraryFormPreviewElement } from "./SpecLibraryFormPreviewElement/SpecLibraryFormPreviewElement";
 
 // MUI ICONS
 
@@ -34,6 +36,7 @@ const SpecLibraryForm = (props) => {
   // STATES
   const [data, setData] = useState(props.data);
   const history = React.useRef(new HistoryLinkedList(props.data));
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
 
   // USE EFFECT
   useEffect(() => {
@@ -56,6 +59,15 @@ const SpecLibraryForm = (props) => {
     if (nextData) {
       setData(nextData);
     }
+  }
+
+  function handleSave() {
+    console.log("Save");
+  }
+
+  function handlePreview() {
+    console.log("Preview");
+    setIsPreviewVisible(!isPreviewVisible);
   }
 
   // HELPER FUNCTIONS
@@ -594,18 +606,63 @@ const SpecLibraryForm = (props) => {
       <div className="SpecLibraryFormHeader">
         <div className="SpecLibraryFormHeaderTitle">Spec Library Form</div>
         <div className="SpecLibraryFormHeaderButtonGroup">
-          <button className="SpecLibraryFormHeaderButton" onClick={handleUndo}>
-            <img src={undo} alt="undo" />
-          </button>
-          <button className="SpecLibraryFormHeaderButton" onClick={handleRedo}>
-            <img src={redo} alt="redo" />
-          </button>
-          <button className="SpecLibraryFormHeaderButton">
-            <img src={save} alt="save" />
-          </button>
+          <div className="tooltip">
+            <button className="SpecLibraryFormHeaderButton">
+              <img
+                src={document_preview}
+                alt="document_preview"
+                onClick={handlePreview}
+              />
+            </button>
+            <span className="tooltip-text">Preview</span>
+          </div>
+          <div className="tooltip">
+            <button
+              className="SpecLibraryFormHeaderButton"
+              onClick={handleUndo}
+            >
+              <img src={undo} alt="undo" />
+            </button>
+            <span className="tooltip-text">Undo</span>
+          </div>
+          <div className="tooltip">
+            <button
+              className="SpecLibraryFormHeaderButton"
+              onClick={handleRedo}
+            >
+              <img src={redo} alt="redo" />
+            </button>
+            <span className="tooltip-text">Redo</span>
+          </div>
+          <div className="tooltip">
+            <button
+              className="SpecLibraryFormHeaderButton"
+              onClick={handleSave}
+            >
+              <img src={save} alt="save" />
+            </button>
+            <span className="tooltip-text">Save</span>
+          </div>
         </div>
       </div>
       <div className="SpecLibraryFormContainer">{renderList(data)}</div>
+      {isPreviewVisible && (
+        <div className="SpecLibraryFormPreviewElement">
+          <div className="SpecLibraryFormListElementPopupContent">
+            <div className="SpecLibraryFormListElementPopupButtonGroup">
+              <button
+                className="SpecLibraryFormListElementPopupButton"
+                onClick={handlePreview}
+              >
+                Close
+              </button>
+            </div>
+            <div className="SpecLibraryFormListElementPopupMessage">
+              <SpecLibraryFormPreviewElement data={data} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

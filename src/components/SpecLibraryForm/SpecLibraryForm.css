@@ -97,7 +97,7 @@
   z-index: 1000;
 }
 
-.SpecLibraryFormListElementPopupContent {
+.SpecLibraryFormPreviewElementContent {
   background-color: #fff;
   border-radius: 8px;
   width: 80%;
@@ -107,13 +107,13 @@
   position: relative;
 }
 
-.SpecLibraryFormListElementPopupButtonGroup {
+.SpecLibraryFormPreviewElementButtonGroup {
   position: absolute;
   top: 10px;
   left: 10px;
 }
 
-.SpecLibraryFormListElementPopupButton {
+.SpecLibraryFormPreviewElementButton {
   background-color: lightgray;
   color: black;
   border: none;
@@ -123,6 +123,6 @@
   font-size: 14px;
 }
 
-.SpecLibraryFormListElementPopupMessage {
+.SpecLibraryFormPreviewElementMessage {
   margin-top: 50px;
 }

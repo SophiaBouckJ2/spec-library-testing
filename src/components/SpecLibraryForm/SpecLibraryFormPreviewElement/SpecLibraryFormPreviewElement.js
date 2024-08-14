@@ -70,8 +70,6 @@ function getIndentAmount(type) {
 
 function renderList(items) {
   return items.map((item, index) => {
-    console.log(item);
-
     let currentItem = renderContent(item);
 
     // Render the sublist if it exists

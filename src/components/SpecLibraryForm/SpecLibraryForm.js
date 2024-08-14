@@ -687,16 +687,16 @@ const SpecLibraryForm = (props) => {
       <div className="SpecLibraryFormContainer">{renderList(data)}</div>
       {isPreviewVisible && (
         <div className="SpecLibraryFormPreviewElement">
-          <div className="SpecLibraryFormListElementPopupContent">
-            <div className="SpecLibraryFormListElementPopupButtonGroup">
+          <div className="SpecLibraryFormPreviewElementContent">
+            <div className="SpecLibraryFormPreviewElementButtonGroup">
               <button
-                className="SpecLibraryFormListElementPopupButton"
+                className="SpecLibraryFormPreviewElementButton"
                 onClick={handlePreview}
               >
                 Close
               </button>
             </div>
-            <div className="SpecLibraryFormListElementPopupMessage">
+            <div className="SpecLibraryFormPreviewElementMessage">
               <SpecLibraryFormPreviewElement data={data} />
             </div>
           </div>

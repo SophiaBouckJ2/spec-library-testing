@@ -41,7 +41,6 @@ const SpecLibraryForm = (props) => {
   // USE EFFECT
   useEffect(() => {
     setData(props.data);
-    // TODO: check if the last snapshot is the same as current data, don't add if it is
     history.current.addSnapshot(props.data);
   }, [props.data]);
 

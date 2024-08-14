@@ -17,6 +17,10 @@ export class HistoryLinkedList {
   // Add a new snapshot of the data to the list
   addSnapshot(newData) {
     const newNode = new HistoryNode(newData, this.current);
+    //check if the last snapshot is the same as current data, dont update if it is
+    if (this.current && this.current.data === newData) {
+      return; // Do not add a new snapshot if the data is unchanged
+    }
     if (this.current) {
       this.current.next = newNode;
     }

@@ -10,7 +10,7 @@ const renderContent = (item) => {
     case "partHeading":
       return (
         <h3>
-          PART {item.marker} - {item.content}
+          {item.marker} {item.content}
         </h3>
       );
     case "sectionHeading":
@@ -50,16 +50,44 @@ const renderContent = (item) => {
   }
 };
 
-const renderList = (list) => {
-  return list.map((item) => (
-    <div key={item.uuid} style={{ marginLeft: item.relativeIndex * 20 + "px" }}>
-      {renderContent(item)}
-      {item.subList && (
-        <div style={{ marginLeft: "20px" }}>{renderList(item.subList)}</div>
-      )}
-    </div>
-  ));
-};
+// Returns the amount of indentation for the given type
+function getIndentAmount(type) {
+  switch (type) {
+    case "sectionHeading":
+      return 1;
+    case "subsection":
+      return 2;
+    case "subsectionList":
+      return 3;
+    case "subsectionListDetails":
+      return 4;
+    case "subSubsectionListDetails":
+      return 5;
+    default:
+      return 0;
+  }
+}
+
+function renderList(items) {
+  return items.map((item, index) => {
+    console.log(item);
+
+    let currentItem = renderContent(item);
+
+    // Render the sublist if it exists
+    let renderedSubList = null;
+    if (item.subList) {
+      renderedSubList = renderList(item.subList);
+    }
+
+    return (
+      <React.Fragment key={index}>
+        {currentItem}
+        {renderedSubList}
+      </React.Fragment>
+    );
+  });
+}
 
 export const SpecLibraryFormPreviewElement = ({ data }) => {
   return <div className="preview-container">{renderList(data)}</div>;

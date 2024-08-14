@@ -151,7 +151,7 @@ const SpecLibraryForm = (props) => {
       case "subTitle": // Subtitle
         return "Subtitle";
       case "partHeading": // PART 1.
-        return `PART ${index + 1}.`;
+        return `PART ${index + 1} -`;
       case "sectionHeading": // 1.1
         return `${parentIndex + 1}.${index + 1}`;
       case "subsection": // A.

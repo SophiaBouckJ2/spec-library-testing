@@ -24,7 +24,7 @@ export const SpecLibraryDummyData = [
     subList: [
       {
         uuid: "4",
-        marker: "PART 1.",
+        marker: "PART 1 -",
         relativeIndex: 0,
         type: "partHeading",
         content: "test default value",
@@ -101,7 +101,7 @@ export const SpecLibraryDummyData = [
       },
       {
         uuid: "15",
-        marker: "PART 2.",
+        marker: "PART 2 -",
         relativeIndex: 1,
         type: "partHeading",
         content: "test default value test",
@@ -118,7 +118,7 @@ export const SpecLibraryDummyData = [
       },
       {
         uuid: "17",
-        marker: "PART 3.",
+        marker: "PART 3 -",
         relativeIndex: 2,
         type: "partHeading",
         content: "test default value",

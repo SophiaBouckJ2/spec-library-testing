@@ -1,21 +1,25 @@
 .preview-container {
   font-family: Arial, sans-serif;
+  margin-left: 30px;
 }
 
+/* title */
 .preview-container h1 {
   font-weight: bold;
   text-align: center;
   font-size: 10pt;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
+/* subtitle */
 .preview-container h2 {
   font-weight: bold;
   text-align: center;
   font-size: 10pt;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
+/* part heading */
 .preview-container h3 {
   font-weight: bold;
   font-size: 10pt;
@@ -23,6 +27,7 @@
   text-align: justify;
 }
 
+/* section heading */
 .preview-container h4 {
   font-weight: bold;
   font-size: 10pt;
@@ -31,20 +36,36 @@
   margin-left: 20px;
 }
 
+/* subsection */
 .preview-container h5 {
   font-weight: normal;
   font-size: 10pt;
   text-align: left;
+  margin-left: 40px;
 }
 
-.preview-container .subsection-list,
-.preview-container .subsection-list-details,
+/* subsection list */
+.preview-container .subsection-list {
+  font-size: 10pt;
+  text-align: left;
+  margin-left: 60px;
+}
+
+/* subsection list details */
+.preview-container .subsection-list-details {
+  font-size: 10pt;
+  text-align: left;
+  margin-left: 80px;
+}
+
+/* sub subsection list details */
 .preview-container .sub-subsection-list-details {
   font-size: 10pt;
   text-align: left;
-  margin-left: 20px;
+  margin-left: 100px;
 }
 
+/* end of section */
 .preview-container .end-of-section {
   text-align: center;
   font-weight: bold;

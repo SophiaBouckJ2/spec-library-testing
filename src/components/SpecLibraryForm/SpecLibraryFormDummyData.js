@@ -4,7 +4,7 @@ export const SpecLibraryDummyData = [
     marker: "Title",
     relativeIndex: 0,
     type: "title",
-    content: "test default value",
+    content: "Title default value",
     subList: null,
   },
   {
@@ -12,7 +12,7 @@ export const SpecLibraryDummyData = [
     marker: "Subtitle",
     relativeIndex: 1,
     type: "subTitle",
-    content: "test default value",
+    content: "Subtitle default value",
     subList: null,
   },
   {

@@ -141,8 +141,9 @@ const SpecLibraryForm = (props) => {
       // if part heading, cannot move any father left
       indentLeftDisabled = true;
     }
-    if (item.relativeIndex === 0) {
+    if (item.relativeIndex === 0 || item.type === "subSubsectionListDetails") {
       // element needs a sibling (to be its new parent) to move right
+      // element cant move right if it is a subsubsection
       indentRightDisabled = true;
     }
 
@@ -368,6 +369,50 @@ const SpecLibraryForm = (props) => {
     findAndInsert(dataCopy);
   }
 
+  // get item based on uuid
+  function getItemByUuid(dataCopy, targetUuid) {
+    // Helper function to search through the structure
+    function findItem(items, targetUuid) {
+      for (const item of items) {
+        if (item.uuid === targetUuid) {
+          return item; // Element found
+        }
+        if (item.subList) {
+          const found = findItem(item.subList, targetUuid);
+          if (found) {
+            return found; // Stop searching if the element is found
+          }
+        }
+      }
+      return null; // Element not found in this branch
+    }
+
+    // Start the search
+    return findItem(dataCopy, targetUuid);
+  }
+
+  // Helper function to find all items with 'subSubSectionListDetails' type in sublist leaves
+  function findItemsWithSubSubSectionListDetails(subList) {
+    // console.log(subList);
+    let foundItems = [];
+
+    for (const subItem of subList) {
+      // console.log(subItem);
+      if (subItem.type === "subSubsectionListDetails") {
+        foundItems.push(subItem); // Add the item to the results array
+      }
+
+      // Recursively search in the nested sublists
+      if (subItem.subList) {
+        foundItems = foundItems.concat(
+          findItemsWithSubSubSectionListDetails(subItem.subList)
+        );
+      }
+    }
+
+    return foundItems; // Return all found items
+  }
+
   // CALLBACKS
 
   // Callback function to delete all items
@@ -482,31 +527,8 @@ const SpecLibraryForm = (props) => {
     }
   }
 
-  // Helper function to find all items with 'subSubSectionListDetails' type in sublist leaves
-  function findItemsWithSubSubSectionListDetails(subList) {
-    // console.log(subList);
-    let foundItems = [];
-
-    for (const subItem of subList) {
-      // console.log(subItem);
-      if (subItem.type === "subSubsectionListDetails") {
-        foundItems.push(subItem); // Add the item to the results array
-      }
-
-      // Recursively search in the nested sublists
-      if (subItem.subList) {
-        foundItems = foundItems.concat(
-          findItemsWithSubSubSectionListDetails(subItem.subList)
-        );
-      }
-    }
-
-    return foundItems; // Return all found items
-  }
-
   //helper/callback
   // Indent the item to the right
-  // TODO: Add a check for the last item in the list, edge case
   function rightIndent(dataCopy, itemCopy, siblingList, item) {
     console.log("rightIndent");
     if (
@@ -520,31 +542,38 @@ const SpecLibraryForm = (props) => {
         );
 
         if (foundItems.length > 0) {
-          console.log(
-            "Items with 'subSubSectionListDetails' type found:",
-            foundItems
-          );
-          return;
+          // handle edge case of subSubsectionListDetails
+          foundItems.forEach((foundItem) => {
+            // deep copy of the found item
+            const foundItemCopy = JSON.parse(JSON.stringify(foundItem));
+            // parents of the found item
+            const foundItemParent = findParent(dataCopy, foundItemCopy.uuid);
+            const foundItemParentOfParent = findParent(
+              dataCopy,
+              foundItemParent.uuid
+            );
+            insertItemsAtIndex(
+              dataCopy,
+              [foundItemCopy],
+              foundItemParent.relativeIndex + 1,
+              foundItemParentOfParent.uuid
+            );
 
-          //     foundItems.forEach((foundItem) => {
-          //       // deep copy of the found item
-          //       const foundItemCopy = JSON.parse(JSON.stringify(foundItem));
-          //       const foundItemParent = findParent(dataCopy, foundItem.uuid);
-          //       const foundItemParentOfParent = findParent(
-          //         dataCopy,
-          //         foundItemParent.uuid
-          //       );
-          //       leftIndent(
-          //         dataCopy,
-          //         foundItemCopy,
-          //         itemCopy,
-          //         foundItemParentOfParent,
-          //         foundItem
-          //       );
-          //     });
+            DeleteSingleItemAndChildren(dataCopy, foundItem.uuid);
+
+            // update all types and markers
+            updateSubListsTypesAndMarkers(
+              dataCopy,
+              dataCopy[2],
+              dataCopy[2].type,
+              dataCopy[2].marker
+            );
+          });
+          itemCopy = getItemByUuid(dataCopy, item.uuid);
+          // deep copy
+          itemCopy = JSON.parse(JSON.stringify(itemCopy));
         }
       }
-      // console.log("dataCopy after dealing with subsections: ", dataCopy);
 
       const nextSibling = siblingList[itemCopy.relativeIndex - 1];
       if (!nextSibling.subList) {

@@ -1,25 +1,26 @@
 .preview-container {
   font-family: Arial, sans-serif;
-  margin-left: 30px;
+  margin-left: 40px;
 }
 
 /* title */
+/* bold, centered */
 .preview-container h1 {
   font-weight: bold;
   text-align: center;
   font-size: 10pt;
-  /* text-transform: uppercase; */
 }
 
 /* subtitle */
+/* bold, centered */
 .preview-container h2 {
   font-weight: bold;
   text-align: center;
   font-size: 10pt;
-  /* text-transform: uppercase; */
 }
 
 /* part heading */
+/* bold, uppercase, justified */
 .preview-container h3 {
   font-weight: bold;
   font-size: 10pt;
@@ -33,7 +34,7 @@
   font-size: 10pt;
   text-transform: uppercase;
   text-align: justify;
-  margin-left: 20px;
+  margin-left: 30px;
 }
 
 /* subsection */
@@ -41,31 +42,40 @@
   font-weight: normal;
   font-size: 10pt;
   text-align: left;
-  margin-left: 40px;
+  margin-left: 60px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* subsection list */
 .preview-container .subsection-list {
   font-size: 10pt;
   text-align: left;
-  margin-left: 60px;
+  margin-left: 80px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* subsection list details */
 .preview-container .subsection-list-details {
   font-size: 10pt;
   text-align: left;
-  margin-left: 80px;
+  margin-left: 100px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* sub subsection list details */
 .preview-container .sub-subsection-list-details {
   font-size: 10pt;
   text-align: left;
-  margin-left: 100px;
+  margin-left: 120px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* end of section */
+/* bold, center, uppercase */
 .preview-container .end-of-section {
   text-align: center;
   font-weight: bold;

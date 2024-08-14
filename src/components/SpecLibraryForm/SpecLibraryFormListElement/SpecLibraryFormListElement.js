@@ -14,13 +14,23 @@ const SpecLibraryFormListElement = (props) => {
   const [marker, setMarker] = useState("");
   const [showSubmenu, setShowSubmenu] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [addDisabled, setAddDisabled] = useState(true);
+  const [indentRightDisabled, setIndentRightDisabled] = useState(true);
+  const [indentLeftDisabled, setIndentLeftDisabled] = useState(true);
+  const [deleteDisabled, setDeleteDisabled] = useState(true);
+  const [deleteAllDisabled, setDeleteAllDisabled] = useState(true);
 
   useEffect(() => {
     setIndent(props.indent ? props.indent : 0);
     setContent(props.item.content ? props.item.content : "");
     setType(props.item.type ? props.item.type : "");
     setMarker(props.item.marker ? props.item.marker : "");
-  }, [props]);
+    setAddDisabled(props.buttonState.addDisabled);
+    setIndentRightDisabled(props.buttonState.indentRightDisabled);
+    setIndentLeftDisabled(props.buttonState.indentLeftDisabled);
+    setDeleteDisabled(props.buttonState.deleteDisabled);
+    setDeleteAllDisabled(props.buttonState.deleteAllDisabled);
+  }, [props, props.buttonState]);
 
   const handleContentChange = (event, item) => {
     setContent(event.target.value);
@@ -63,6 +73,7 @@ const SpecLibraryFormListElement = (props) => {
                     setShowSubmenu(false);
                     handleDeleteAll();
                   }}
+                  disabled={deleteAllDisabled}
                 >
                   Delete All
                 </button>
@@ -73,6 +84,7 @@ const SpecLibraryFormListElement = (props) => {
             <button
               className="SpecLibraryFormListElementNavigationButton"
               onClick={() => props.deleteOneCallback(props.item)}
+              disabled={deleteDisabled}
             >
               <img src={delete_one} alt="delete_one" />
             </button>
@@ -82,7 +94,7 @@ const SpecLibraryFormListElement = (props) => {
             <button
               className="SpecLibraryFormListElementNavigationButton GrayedOut"
               onClick={() => props.indentCallback("left", props.item)}
-              // disabled={indent === 0}
+              disabled={indentLeftDisabled}
             >
               <img src={move_left} alt="move_left" />
             </button>
@@ -92,7 +104,7 @@ const SpecLibraryFormListElement = (props) => {
             <button
               className="SpecLibraryFormListElementNavigationButton GrayedOut"
               onClick={() => props.indentCallback("right", props.item)}
-              // disabled={indent === 5 || marker === "PART 1."}
+              disabled={indentRightDisabled}
             >
               <img src={move_right} alt="move_right" />
             </button>
@@ -102,6 +114,7 @@ const SpecLibraryFormListElement = (props) => {
             <button
               className="SpecLibraryFormListElementNavigationButton"
               onClick={() => props.addCallback(props.item)}
+              disabled={addDisabled}
             >
               <img src={add_new} alt="add_new" />
             </button>

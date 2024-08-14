@@ -41,6 +41,7 @@ const SpecLibraryForm = (props) => {
   // USE EFFECT
   useEffect(() => {
     setData(props.data);
+    // TODO: check if the last snapshot is the same as current data, don't add if it is
     history.current.addSnapshot(props.data);
   }, [props.data]);
 
@@ -62,11 +63,10 @@ const SpecLibraryForm = (props) => {
   }
 
   function handleSave() {
-    console.log("Save");
+    console.log("Data on save: ", data);
   }
 
   function handlePreview() {
-    console.log("Preview");
     setIsPreviewVisible(!isPreviewVisible);
   }
 
@@ -100,6 +100,7 @@ const SpecLibraryForm = (props) => {
             addCallback={AddCallback}
             deleteAllCallback={DeleteAllCallback}
             deleteOneCallback={deleteOneCallback}
+            buttonState={determineButtonState(item)}
           />
         );
       }
@@ -117,6 +118,42 @@ const SpecLibraryForm = (props) => {
         </React.Fragment>
       );
     });
+  }
+
+  // Function to determine which buttons are enabled on list element
+  function determineButtonState(item) {
+    let { siblingList } = getDetailsForCallback(item);
+    let deleteDisabled = false,
+      deleteAllDisabled = false,
+      indentLeftDisabled = false,
+      indentRightDisabled = false,
+      addDisabled = false;
+
+    if (
+      item.type === "partHeading" &&
+      item.relativeIndex === 0 &&
+      siblingList.length <= 1
+    ) {
+      // if part heading is the last element of its kind, cannot delete
+      deleteAllDisabled = true;
+      deleteDisabled = true;
+    }
+    if (item.type === "partHeading") {
+      // if part heading, cannot move any father left
+      indentLeftDisabled = true;
+    }
+    if (item.relativeIndex === 0) {
+      // element needs a sibling (to be its new parent) to move right
+      indentRightDisabled = true;
+    }
+
+    return {
+      deleteDisabled,
+      deleteAllDisabled,
+      indentLeftDisabled,
+      indentRightDisabled,
+      addDisabled,
+    };
   }
 
   // Function to update data and add snapshot to history
@@ -475,7 +512,7 @@ const SpecLibraryForm = (props) => {
     console.log("rightIndent");
     if (
       itemCopy.type !== "subSubsectionListDetails" &&
-      itemCopy.marker !== "PART 1." &&
+      itemCopy.marker !== "PART 1 -" &&
       itemCopy.relativeIndex !== 0
     ) {
       if (itemCopy.subList) {
@@ -620,6 +657,7 @@ const SpecLibraryForm = (props) => {
             <button
               className="SpecLibraryFormHeaderButton"
               onClick={handleUndo}
+              disabled={!history.current.canUndo()}
             >
               <img src={undo} alt="undo" />
             </button>
@@ -629,6 +667,7 @@ const SpecLibraryForm = (props) => {
             <button
               className="SpecLibraryFormHeaderButton"
               onClick={handleRedo}
+              disabled={!history.current.canRedo()}
             >
               <img src={redo} alt="redo" />
             </button>

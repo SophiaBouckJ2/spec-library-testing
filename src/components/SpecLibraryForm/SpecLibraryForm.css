@@ -27,10 +27,14 @@
 .SpecLibraryFormHeaderButton {
   background: none;
   border: none;
-  /* padding: 5px; */
   cursor: pointer;
 
   transition: transform 0.2s;
+}
+
+.SpecLibraryFormHeaderButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
 }
 
 .SpecLibraryFormHeaderButton:hover {
